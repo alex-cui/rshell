@@ -5,6 +5,7 @@
 
 #include <string.h>
 #include <stdio.h> //needed for perror
+#include <stdlib.h>
 #include <unistd.h> //execvp
 #include <sys/types.h>
 #include <sys/wait.h>
