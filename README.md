@@ -27,6 +27,8 @@ If a pound symbol is encountered, the program will check if the word is the poun
 
 Lastly, if a semicolon is encountered, the command will simply be pushed into the vector, and start anew.
 
+Every command will be executed by using execvp. We will first make a fork to duplicate the program. We will check the PID as the child program has a PID of 0, and the parent program has a PID of greater than 0. We will execute the command only in the child program, as a program ends when a system call is used. We error check by using perror after each system call, as it will not give any error message without it.
+
 When the loop is broken by using the special exit command, the program will simply end.
 
 
