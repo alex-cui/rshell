@@ -27,11 +27,7 @@ If a pound symbol is encountered, the program will check if the word is the poun
 
 Lastly, if a semicolon is encountered, the command will simply be pushed into the vector, and start anew.
 
-
-When the loop is broken by using the special exit command, the program will simply end.## Details
-------------
-
-When parsing the string,
+When the loop is broken by using the special exit command, the program will simply end.
 
 
 ## Known Bugs
