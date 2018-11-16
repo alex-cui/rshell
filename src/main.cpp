@@ -26,21 +26,19 @@ int charIndex(char* temp, char c[]) {
 }
 
 int main() {
-    vector <Base*> v;
+    vector <Base*> v; //mainly holds connectors but can hold commands
     string input;
-    int flag = 0;
     Command* cmd = new Command();
     Base* conn = 0;
     char semicolon[] = ";";
     char pound[] = "#";
     
-    while (getline(cin, input)) {
-        
+    while (getline(cin, input)) { 
         char* c = &input.at(0);
 
         strtok(c, " "); 
        
-	//parses string 
+	//main loop that parses string 
         while (c != 0) {
             if (strpbrk(c, pound) != NULL) {
                 if (c[0] == '#') {
@@ -49,12 +47,12 @@ int main() {
                 else {
                     c[charIndex(&c[0], pound)] = '\0';
                         
-                    cmd->add(c);
+                    cmd->add(c); //add possible command before c
                     break;
                 }
             }
             else if (strpbrk(c, semicolon) != NULL) {
-		//semicolon should ALWAYS at the end b/c no space after
+		//semicolon should ALWAYS be at the end b/c no space after
                 c[charIndex(&c[0], semicolon)] = '\0'; 
                     
                 cmd->add(c);
@@ -62,7 +60,7 @@ int main() {
                 conn = new Semicolon(cmd);
                 v.push_back(conn);
                     
-                cmd = new Command();
+                cmd = new Command(); //reset cmd
             }
             else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
                 conn = new And(cmd);
@@ -77,7 +75,7 @@ int main() {
                 cmd = new Command();
             }
             else {
-                cmd->add(c);
+                cmd->add(c); //keep building commands as possible flag
             }
              
             c = strtok (0, " ");
@@ -85,19 +83,17 @@ int main() {
         
         if (cmd->hasCommand()) {
             v.push_back(cmd);
-        } //check for last command
+        } //check for last command without connector
     
         for (unsigned i = 0; i < v.size(); ++i) {
             if ((v.at(i))->exec() == false) {
                 break;
-            }
+            } //executes as long as connector rules are obeyed
         }
 
-        v.clear();
+        v.clear(); //clears vector for next loop
         cmd = new Command();
     }
-        
-
     
     return 0;
 }
