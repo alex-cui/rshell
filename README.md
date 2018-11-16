@@ -13,14 +13,27 @@ $ cmake3 .
 
 $ make
 
-$./rshell
+$ ./rshell
 ```
 
 ## Overview
 ------------
 
-This program will take a string input from a user, and then parse that string checking for three types of flags: &&, ||, and ; and execute commands based on the user input.
-After the user enters a string, the program will parse the string using the strtok function in the cstring library. The funtion splits the string up into tokens based on whether a flag or null character was reached. If a connector is reached, the code continues to parse the string looking for commands. If a null character is reached, that is the end of the input. The commands are executed using the system calls: fork, execvp, and waitpid, and error checked these using perror. 
+This program will continuously take a line of input from the user, and then parse that string using strtok, which separates the sentence by whitespace.  It will check if the word is or consists of #, ;, &&, or a || . 
+
+If a connector is encountered, whatever command was constructed will become the child of the connector; and this connector will be pushed into a vector that will later be executed one by one.
+
+If a pound symbol is encountered, the program will check if the word is the pound itself, or if the word consists of it. Either way, it will be parsed accordingly, pushing whatever command that exists into the execution vector,
+
+Lastly, if a semicolon is encountered, the command will simply be pushed into the vector, and start anew.
+
+
+When the loop is broken by using the special exit command, the program will simply end.## Details
+------------
+
+When parsing the string,
+
+
 ## Known Bugs
 ------------
 
