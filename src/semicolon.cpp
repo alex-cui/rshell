@@ -1,4 +1,4 @@
-#include "semicolon.h"
+#include "../header/semicolon.h"
 
 Semicolon::Semicolon() {
     lhs = 0;

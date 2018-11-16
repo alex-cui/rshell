@@ -1,4 +1,4 @@
-#include "and.h"
+#include "../header/and.h"
 
 And::And() {
     lhs = 0;

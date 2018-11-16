@@ -1,4 +1,4 @@
-#include "or.h"
+#include "../header/or.h"
 
 Or::Or() {
     lhs = 0;

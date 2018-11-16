@@ -1,4 +1,4 @@
-#include "connector.h"
+#include "../header/connector.h"
 
 Connector::Connector() {
     lhs = 0;
