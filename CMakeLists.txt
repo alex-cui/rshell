@@ -5,11 +5,12 @@ ADD_SUBDIRECTORY(googletest)
 SET(CMAKE_CXX_STANDARD 11)
 
 ADD_EXECUTABLE(rshell
-    main.cpp
-    connector.cpp
-    and.cpp
-    or.cpp
-    semicolon.cpp
+    src/main.cpp
+    src/connector.cpp
+    src/and.cpp
+    src/or.cpp
+    src/semicolon.cpp
+    src/command.cpp
 )
 
 ADD_EXECUTABLE(test
