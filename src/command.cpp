@@ -20,9 +20,11 @@ bool Command::exec() {
     
     if (s == ex) {
         exit(0);
-    } //exit if command is "exit"
+    } //exit if command is "exit"; still obeys connector rules b/c of main!
     
-    //pid = Process ID
+    //pid = Process ID; fork is needed because executing a program will 
+    //cause it to end, so we have a dummy program to do it and be killed
+    //while we keep the main program
     pid_t pid = fork();
 
     if (pid == 0) { //child
@@ -35,10 +37,11 @@ bool Command::exec() {
             cstr[i] = cmd.at(i);
         }
 
-        cstr[cmd.size()] = NULL;
+        cstr[cmd.size()] = NULL; //b/c must be null terminated
 
         if ((execvp(cstr[0], cstr)) == -1) {
             perror("execvp");
+
             return false;
         }
 
@@ -47,12 +50,12 @@ bool Command::exec() {
     else if (pid > 0) { //parent
         if (wait(0) < 0) {
             perror("wait");
-        } 
-
+        } //wait for child to finish then resume 
+	
         return true;
     }
     else {
-        perror("fork"); 
+        perror("fork"); //otherwise there's no error message!
         
         return false;
     }
