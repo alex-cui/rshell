@@ -19,13 +19,17 @@ using namespace std;
 class Command : public Base {
     protected:
         vector <char*> cmd; //accounts for flags
-
+	char testFlag;
+        
     public:
         Command();
         
-        void add(char* c);
+        void addCmd(char* c);
+        void addFlag(char f);
+
         bool hasCommand();
-        virtual bool exec();
+        
+        virtual void exec();
 };
 
 #endif

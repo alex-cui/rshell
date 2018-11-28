@@ -8,7 +8,7 @@ class And : public Connector {
         And();
         And(Base* left);
         
-        virtual bool exec();
+        virtual void exec();
 };
 
 #endif
