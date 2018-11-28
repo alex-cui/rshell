@@ -135,8 +135,9 @@ int main() {
                 if (v.size() == 1) {
                     break;
                 }
-                else if (i == (v.size() - 1)) {
-                    v.pop_back(); 
+                else if (i == (v.size() - 2)) {
+                    v.pop_back();
+		    break; 
                 }
                 else {
                     i += 2;
