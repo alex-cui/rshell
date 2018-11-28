@@ -1,18 +1,13 @@
-#include "../header/or.h"
+#include "../header/semicolon.h"
 
-Or::Or() {
+Semicolon::Semicolon() {
     lhs = 0;
 }
 
-Or::Or(Base* left) {
+Semicolon::Semicolon(Base* left) {
     lhs = left;
 }
 
-void Or::exec() {    
-    if (lhs->succeeded) {
-        succeeded = false;
-    }
-    else { 
-        succeeded = true;
-    }
+void Semicolon::exec() {
+    succeeded = true;
 }
