@@ -6,12 +6,12 @@
 #include "../header/semicolon.h"
 
 #include "../header/command.h"
+#include "../header/test.h"
 
 #include <iostream>
 #include <string>
-#include <stdio.h>
-#include <string.h>
 #include <vector>
+#include <stdio.h>
 
 using namespace std;
 
@@ -26,74 +26,128 @@ int charIndex(char* temp, char c[]) {
 }
 
 int main() {
-    vector <Base*> v; //mainly holds connectors but can hold commands
-    string input;
+    vector <Base*> v;
+
+    Connector* conn = 0;
     Command* cmd = new Command();
-    Base* conn = 0;
+
     char semicolon[] = ";";
     char pound[] = "#";
-    
-    while (getline(cin, input)) { 
-        char* c = &input.at(0);
+    string test = "test";   
+    string ANDsym = "&&";
+    string ORsym = "||";
+    string openBrack = "[";
+    string closeBrack = "]";
+    string input;
+    char *c = 0;
+
+    while (getline(cin, input)) {
+        if (input != "") {
+            c = &input.at(0);
+        }
 
         strtok(c, " "); 
-       
-	//main loop that parses string 
+
         while (c != 0) {
-            if (strpbrk(c, pound) != NULL) {
+            if (c == test) {
+                c = strtok(0, " "); 
+
+                cmd = new Test(); 
+
+                if ((c[0] == '-') && (c[2] == '\0')) {
+                    cmd->addFlag(c[1]);
+                    c = strtok(0, " "); 
+                }
+
+                cmd->addCmd(c);
+            }
+            else if (c == openBrack) {
+                c = strtok(0, " "); 
+
+                cmd = new Test();
+
+                if ((c[0] == '-') && (c[2] == '\0')) {
+                    cmd->addFlag(c[1]);
+                    c = strtok(0, " "); 
+                }
+
+                cmd->addCmd(c);
+
+                while (c != closeBrack) {
+                    c = strtok(0, " "); 
+                    cmd->addCmd(c);
+                }
+            }
+            else if (strpbrk(c, pound) != NULL) {
                 if (c[0] == '#') {
                     break;
-                } //dont want to add # as command!
+                }
                 else {
                     c[charIndex(&c[0], pound)] = '\0';
                         
-                    cmd->add(c); //add possible command before c
+                    cmd->addCmd(c); 
                     break;
                 }
             }
             else if (strpbrk(c, semicolon) != NULL) {
-		//semicolon should ALWAYS be at the end b/c no space after
                 c[charIndex(&c[0], semicolon)] = '\0'; 
                     
-                cmd->add(c);
-                    
+                cmd->addCmd(c);
+                v.push_back(cmd);
+
                 conn = new Semicolon(cmd);
                 v.push_back(conn);
                     
-                cmd = new Command(); //reset cmd
+                cmd = new Command();
             }
-            else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
+            else if (c == ANDsym) {
+                v.push_back(cmd);
+
                 conn = new And(cmd);
                 v.push_back(conn);
                 
                 cmd = new Command();
             }
-            else if (c[0] == '|' && c[1] == '|' && c[2] == '\0') {
+            else if (c == ORsym) {
+                v.push_back(cmd);
+
                 conn = new Or(cmd);
                 v.push_back(conn);
                 
                 cmd = new Command();
             }
             else {
-                cmd->add(c); //keep building commands as possible flag
+                cmd->addCmd(c);
             }
-             
+
             c = strtok (0, " ");
         }
-        
+
         if (cmd->hasCommand()) {
-            v.push_back(cmd);
-        } //check for last command without connector
-    
+            v.push_back(cmd);         
+            cmd = new Command();
+        } 
+
         for (unsigned i = 0; i < v.size(); ++i) {
-            if ((v.at(i))->exec() == false) {
-                break;
-            } //executes as long as connector rules are obeyed
+            v.at(i)->exec();
+
+            while (!(v.at(i)->succeeded)) {
+                if (v.size() == 1) {
+                    break;
+                }
+                else if (i == (v.size() - 1)) {
+                    v.pop_back(); 
+                }
+                else {
+                    i += 2;
+                    v.at(i)->lhs = v.at(i - 2)->lhs;
+                    v.at(i)->exec();
+                }
+            }
         }
 
-        v.clear(); //clears vector for next loop
-        cmd = new Command();
+        v.clear();
     }
-    
+
     return 0;
 }
