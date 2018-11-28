@@ -8,10 +8,11 @@ And::And(Base* left) {
     lhs = left;
 }
 
-//executes right if left succeeds
-bool And::exec() {
-    if (lhs->exec()) {
-        return true;
+void And::exec() {    
+    if (lhs->succeeded) {
+        succeeded = true;
     }
-    return false;
+    else {
+        succeeded = false;
+    }
 }

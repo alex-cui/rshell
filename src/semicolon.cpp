@@ -1,16 +1,18 @@
-#include "../header/semicolon.h"
+#include "../header/or.h"
 
-Semicolon::Semicolon() {
+Or::Or() {
     lhs = 0;
 }
 
-Semicolon::Semicolon(Base* left) {
+Or::Or(Base* left) {
     lhs = left;
 }
 
-//always executes right
-bool Semicolon::exec() {
-    lhs->exec();
-    
-    return true;
+void Or::exec() {    
+    if (lhs->succeeded) {
+        succeeded = false;
+    }
+    else { 
+        succeeded = true;
+    }
 }

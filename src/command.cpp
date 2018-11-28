@@ -1,9 +1,16 @@
 #include "../header/command.h"
 
-Command::Command() {}
+Command::Command() {
+    testFlag = 'e';
+    lhs = 0;
+}
 
-void Command::add(char* c) {
+void Command::addCmd(char* c) {
     cmd.push_back(c);
+}
+
+void Command::addFlag(char f) {
+    testFlag = f;
 }
 
 bool Command::hasCommand() {
@@ -13,50 +20,40 @@ bool Command::hasCommand() {
     return true;
 }
 
-bool Command::exec() {
-    int exitFlag = 0;
-    const char* ex = "exit";
+void Command::exec() {    
     string s = cmd.at(0);
-    
-    if (s == ex) {
+    string temp = "exit";
+
+    if (s == temp) {
         exit(0);
-    } //exit if command is "exit"; still obeys connector rules b/c of main!
-    
-    //pid = Process ID; fork is needed because executing a program will 
-    //cause it to end, so we have a dummy program to do it and be killed
-    //while we keep the main program
+    }
+
     pid_t pid = fork();
 
-    if (pid == 0) { //child
-        s = cmd.at(0);
-
+    if (pid == 0) { 
         char* cstr[cmd.size() + 1];
 	
-	//copy vector into character array
         for (unsigned i = 0; i < cmd.size(); ++i) {
             cstr[i] = cmd.at(i);
         }
 
-        cstr[cmd.size()] = NULL; //b/c must be null terminated
+        cstr[cmd.size()] = NULL;
 
         if ((execvp(cstr[0], cstr)) == -1) {
             perror("execvp");
-
-            return false;
+            succeeded = false;
         }
-
-        return true;
     }
-    else if (pid > 0) { //parent
+    else if (pid > 0) { 
         if (wait(0) < 0) {
             perror("wait");
-        } //wait for child to finish then resume 
-	
-        return true;
+        } 
+
+        succeeded = true;    
     }
     else {
-        perror("fork"); //otherwise there's no error message!
-        
-        return false;
+        perror("fork");
+
+        succeeded = false;
     }
 }

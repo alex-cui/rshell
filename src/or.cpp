@@ -8,10 +8,11 @@ Or::Or(Base* left) {
     lhs = left;
 }
 
-//executes right if left FAILS
-bool Or::exec() {
-    if (lhs->exec()) {
-        return false;
+void Or::exec() {    
+    if (lhs->succeeded) {
+        succeeded = false;
     }
-    return true;
+    else { 
+        succeeded = true;
+    }
 }

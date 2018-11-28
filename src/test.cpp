@@ -1,107 +1,44 @@
-#include "base.h"
+#include "../header/test.h"
 
-#include "connector.h"
-#include "and.h"
-#include "or.h"
-#include "semicolon.h"
+Test::Test() {
+    testFlag = 'e';
+    lhs = 0;
+}
 
-#include "command.h"
-#include "exit.h"
-
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <string.h>
-#include <vector>
-
-#include "gtest/gtest.h"
-
-using namespace std;
-
-int charIndex(char* temp, char c[]) {
-    int counter = -1;
+void Test::exec() {
+    const char* temp = cmd.at(0);
+    struct stat buffer;
     
-    while (*temp != '\0') {
-        temp += 1;
-        counter += 1;
+    if (stat(temp, &buffer) == -1) {
+        perror("stat");
+
+        succeeded = false;
+    } 
+    else {
+        if (testFlag == 'e') {
+            cout << "(True)" << endl;
+
+            succeeded = true;
+            return;
+        }
+        else if (testFlag == 'f') {
+            if (S_ISREG(buffer.st_mode)) {
+                cout << "(True)" << endl;
+
+                succeeded = true;
+                return;
+            }
+        }
+        else if (testFlag == 'd') {
+            if (S_ISDIR(buffer.st_mode)) {
+                cout << "(True)" << endl;
+
+                succeeded = true;
+                return;
+            }
+        }
+        
+        cout << "(False)" << endl;
+        succeeded = true; 
     }
-    return counter;
-}
-
-void request(string input) {
-    vector <Base*> v;
-    int flag = 0;
-    Command* cmd = new Command();
-    Base* conn = 0;
-    char semicolon[] = ";";
-    char pound[] = "#";
-    
-        char* c = &input.at(0);
-
-        strtok(c, " ");
-        
-        while (c != 0) {
-            if (strpbrk(c, pound) != NULL) {
-                if (c[0] == '#') {
-                    break;
-                } 
-                else {
-                    c[charIndex(&c[0], pound)] = '\0';
-                        
-                    cmd->add(c);
-                    break;
-                }
-            }
-            else if (strpbrk(c, semicolon) != NULL) {
-                c[charIndex(&c[0], semicolon)] = '\0'; 
-                    
-                cmd->add(c);
-                    
-                conn = new Semicolon(cmd);
-                v.push_back(conn);
-                    
-                cmd = new Command();
-            }
-            else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
-                conn = new And(cmd);
-                v.push_back(conn);
-                
-                cmd = new Command();
-            }
-            else if (c[0] == '|' && c[1] == '|' && c[2] == '\0') {
-                conn = new Or(cmd);
-                v.push_back(conn);
-                
-                cmd = new Command();
-            }
-            else {
-                cmd->add(c);
-            }
-             
-            c = strtok (0, " ");
-        }
-        
-        if (cmd->hasCommand()) {
-            v.push_back(cmd);
-        }
-    
-        for (unsigned i = 0; i < v.size(); ++i) {
-            if ((v.at(i))->exec() == false) {
-                break;
-            }
-        }
-}
-
-TEST(execIntegrationTest, lsTest) {
-  request("ls");
-
-      
-
-
-  EXPECT_EQ(execvp(
-}
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }
