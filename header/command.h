@@ -9,6 +9,7 @@
 #include <unistd.h> //execvp
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h> //for test commands
 
 #include <iostream>
 #include <string>
