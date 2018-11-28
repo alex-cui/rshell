@@ -11,10 +11,11 @@ ADD_EXECUTABLE(rshell
     src/or.cpp
     src/semicolon.cpp
     src/command.cpp
+    src/test.cpp
 )
 
 ADD_EXECUTABLE(test
-    src/test.cpp
+    tests/test.cpp
 )
 
 TARGET_LINK_LIBRARIES(test gtest)
