@@ -10,7 +10,7 @@ void Test::exec() {
     struct stat buffer;
     
     if (stat(temp, &buffer) == -1) {
-        perror("stat");
+        perror("stat"); //-1 on failure
 
         succeeded = false;
     } 
@@ -39,6 +39,6 @@ void Test::exec() {
         }
         
         cout << "(False)" << endl;
-        succeeded = true; 
+        succeeded = true; //bc still executed correctly just false
     }
 }

@@ -26,12 +26,12 @@ int charIndex(char* temp, char c[]) {
 }
 
 int main() {
-    vector <Base*> v;
+    vector <Base*> v; //holds every command and connector for execution
 
     Connector* conn = 0;
     Command* cmd = new Command();
 
-    char semicolon[] = ";";
+    char semicolon[] = ";"; //automatically fills in NULL
     char pound[] = "#";
     string test = "test";   
     string ANDsym = "&&";
@@ -41,6 +41,7 @@ int main() {
     string input;
     char *c = 0;
 
+    //main loop-- ends when exit is entered
     while (getline(cin, input)) {
         if (input != "") {
             c = &input.at(0);
@@ -48,18 +49,20 @@ int main() {
 
         strtok(c, " "); 
 
+	//parses the string
         while (c != 0) {
             if (c == test) {
                 c = strtok(0, " "); 
 
                 cmd = new Test(); 
 
+		//add flag if specified, else -e
                 if ((c[0] == '-') && (c[2] == '\0')) {
                     cmd->addFlag(c[1]);
                     c = strtok(0, " "); 
                 }
 
-                cmd->addCmd(c);
+                cmd->addCmd(c); //test should be one command
             }
             else if (c == openBrack) {
                 c = strtok(0, " "); 
@@ -73,32 +76,35 @@ int main() {
 
                 cmd->addCmd(c);
 
+		//only difference from test
                 while (c != closeBrack) {
                     c = strtok(0, " "); 
                     cmd->addCmd(c);
                 }
             }
             else if (strpbrk(c, pound) != NULL) {
+		//dont want to add # as command
                 if (c[0] == '#') {
                     break;
                 }
                 else {
                     c[charIndex(&c[0], pound)] = '\0';
                         
-                    cmd->addCmd(c); 
+                    cmd->addCmd(c); //add possible command before c
                     break;
                 }
             }
             else if (strpbrk(c, semicolon) != NULL) {
+		//semicolon should ALWAYS be at the end b/c no space after
                 c[charIndex(&c[0], semicolon)] = '\0'; 
                     
                 cmd->addCmd(c);
-                v.push_back(cmd);
+                v.push_back(cmd); //command is complete
 
                 conn = new Semicolon(cmd);
-                v.push_back(conn);
+                v.push_back(conn); 
                     
-                cmd = new Command();
+                cmd = new Command(); //reset command
             }
             else if (c == ANDsym) {
                 v.push_back(cmd);
@@ -120,18 +126,22 @@ int main() {
                 cmd->addCmd(c);
             }
 
-            c = strtok (0, " ");
+            c = strtok (0, " "); //keep parsing string
         }
 
+	//checks for last command without connector
         if (cmd->hasCommand()) {
             v.push_back(cmd);         
             cmd = new Command();
         } 
 
+	//output loop
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
-            while (!(v.at(i)->succeeded)) {
+	    //if a command failed or conenctor is false
+	    //only connectors should have a child
+            while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
                 if (v.size() == 1) {
                     break;
                 }
@@ -139,14 +149,14 @@ int main() {
                     v.pop_back(); 
                 }
                 else {
-                    i += 2;
+                    i += 2; //moves 2 since next is command
                     v.at(i)->lhs = v.at(i - 2)->lhs;
                     v.at(i)->exec();
                 }
             }
         }
 
-        v.clear();
+        v.clear(); //clears vector for next getline
     }
 
     return 0;

@@ -24,35 +24,42 @@ void Command::exec() {
     string s = cmd.at(0);
     string temp = "exit";
 
+    //end program if cmd is EXIT
     if (s == temp) {
         exit(0);
     }
 
+    //pid = Process ID; fork is needed b/c executing a program will
+    //cause it to end, so we have a dummy program to do it and be killed 
+    //while we keep the main program
     pid_t pid = fork();
 
-    if (pid == 0) { 
+
+    if (pid == 0) { //child
         char* cstr[cmd.size() + 1];
 	
+	//copy vector into character array for execvp
         for (unsigned i = 0; i < cmd.size(); ++i) {
             cstr[i] = cmd.at(i);
         }
 
-        cstr[cmd.size()] = NULL;
+        cstr[cmd.size()] = NULL; //b/c must be null terminated
 
         if ((execvp(cstr[0], cstr)) == -1) {
             perror("execvp");
             succeeded = false;
         }
     }
-    else if (pid > 0) { 
-        if (wait(0) < 0) {
+    else if (pid > 0) { //parent
+        //wait for child to finish then resume
+	if (wait(0) < 0) {
             perror("wait");
-        } 
+        }  
 
         succeeded = true;    
     }
     else {
-        perror("fork");
+        perror("fork"); //need perror otherwise no error message!
 
         succeeded = false;
     }

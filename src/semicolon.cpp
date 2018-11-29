@@ -8,6 +8,7 @@ Semicolon::Semicolon(Base* left) {
     lhs = left;
 }
 
+//always executes right
 void Semicolon::exec() {
     succeeded = true;
 }
