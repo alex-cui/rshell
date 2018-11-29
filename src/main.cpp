@@ -131,7 +131,7 @@ int main() {
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
-            while (!(v.at(i)->succeeded)) {
+            while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
                 if (v.size() == 1) {
                     break;
                 }
