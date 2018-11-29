@@ -139,20 +139,20 @@ int main() {
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
-	    //if a command failed or conenctor is false
-	    //only connectors should have a child
-            while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
-                if (v.size() == 1) {
-                    break;
-                }
-                else if (i == (v.size() - 1)) {
-                    v.pop_back(); 
-                }
-                else {
-                    i += 2; //moves 2 since next is command
-                    v.at(i)->lhs = v.at(i - 2)->lhs;
-                    v.at(i)->exec();
-                }
+	//if a command failed or conenctor is false
+	//only connectors should have a child
+        while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
+            if (v.size() == 1) {
+                break;
+            }
+            else if (i == (v.size() - 2)) {
+                v.pop_back();
+	        break; 
+            }
+            else {
+                i += 2; //moves 2 since next is command
+                v.at(i)->lhs = v.at(i - 2)->lhs;
+                v.at(i)->exec();
             }
         }
 
