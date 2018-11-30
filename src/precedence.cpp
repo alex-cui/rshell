@@ -5,10 +5,14 @@ Precedence::Precedence() {
 }
 
 void Precedence::addPrecCmd(Base* b) {
-    precCmd.push_back(b);
+    v.push_back(b);
 }
 
 void Precedence::exec() {
-
+    //then only one command
+    if (v.size() == 1) {
+	v.at(0)->exec();
+    }
+    else {
+    }
 }
-

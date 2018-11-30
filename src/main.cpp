@@ -8,6 +8,8 @@
 #include "../header/command.h"
 #include "../header/test.h"
 
+#include "../header/precedence.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -23,6 +25,116 @@ int charIndex(char* temp, char c[]) {
         counter += 1;
     }
     return counter;
+}
+
+void parse(char* c, Precedence* p) {
+    char semicolon[] = ";";
+    char pound[] = "#";
+    string test = "test";   
+    string ANDsym = "&&";
+    string ORsym = "||";
+    string openBrack = "[";
+    string closeBrack = "]";
+    string input = "";
+
+    Connector* conn = 0;
+    Command* cmd = new Command();
+    Precedence* pre = new Precedence();
+
+    while (c[strlen(c) - 1] != ')') {
+        if (strpbrk(c, "#") != NULL) {
+            if (c[0] == '#') {
+                return;
+            } 
+            else {    
+                c[charIndex(&c[0], pound)] = '\0';
+                    
+                cmd->addCmd(c);
+                return;
+            }
+        }
+        else if (c[0] == '(') {
+            c = strtok(0, " ");
+
+            while (c[strlen(c) - 1] != ')') {
+                parse(c, pre);
+
+                c = strtok(0, " ");
+            }
+
+            c[strlen(c) - 1] = '\0';
+            cmd->addCmd(c);
+
+            p->add(cmd);
+        }
+        else if (c == test) {
+            c = strtok(0, " "); 
+
+            cmd = new Test();
+
+            if ((c[0] == '-') && (c[2] == '\0')) {
+                cmd->addFlag(c[1]);
+               c = strtok(0, " "); 
+            }
+
+            cmd->addCmd(c);
+        }
+        else if (c == openBrack) {
+            c = strtok(0, " "); 
+
+            cmd = new Test();
+
+            if ((c[0] == '-') && (c[2] == '\0')) {
+                cmd->addFlag(c[1]);
+                c = strtok(0, " "); 
+            }
+
+            cmd->addCmd(c);
+
+            while (c != closeBrack) {
+                c = strtok(0, " "); 
+                cmd->addCmd(c);
+            }
+        }
+        else if (strpbrk(c, semicolon) != NULL) {
+            c[strlen(c) - 1] = '\0'; 
+                    
+            cmd->addCmd(c);
+            p->add(cmd);
+
+            conn = new Semicolon(cmd);
+            p->add(conn);
+                    
+            cmd = new Command();
+        }
+        else if (c == ANDsym) {
+            p->add(cmd); 
+
+            conn = new And(cmd);
+            p->add(conn);
+                
+            cmd = new Command();
+        }
+        else if (c == ORsym) {
+            p->add(cmd);
+
+            conn = new Or(cmd);
+            p->add(conn);
+                
+            cmd = new Command();
+        }
+        else {
+            cmd->addCmd(c);
+        }
+
+        c = strtok (0, " ");
+     }
+
+     //now get last command
+     c[strlen(c) - 1] = '\0';
+     cmd->addCmd(c);
+
+     p->add(cmd);
 }
 
 int main() {
@@ -96,7 +208,7 @@ int main() {
             }
             else if (strpbrk(c, semicolon) != NULL) {
 		//semicolon should ALWAYS be at the end b/c no space after
-                c[charIndex(&c[0], semicolon)] = '\0'; 
+                c[strlen(c) - 1] = '\0'; 
                     
                 cmd->addCmd(c);
                 v.push_back(cmd); //command is complete

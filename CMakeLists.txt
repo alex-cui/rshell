@@ -12,6 +12,7 @@ ADD_EXECUTABLE(rshell
     src/semicolon.cpp
     src/command.cpp
     src/test.cpp
+    src/precedence.cpp
 )
 
 ADD_EXECUTABLE(test

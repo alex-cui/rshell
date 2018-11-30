@@ -2,6 +2,7 @@
 #define PRECEDENCE_H
 
 #include <iostream>
+#include <vector>
 
 #include "base.h"
 
@@ -9,13 +10,14 @@ using namespace std;
 
 class Precedence : public Base {
     protected:
-	vector <Base*> precCmd; //hold commands/connectors inside ()
+	vector <Base*> v; //hold commands/connectors inside ()
+
     public:
         Precedence();
         
-        void addPrecCmd(Base* b);
+        void add(Base* b);
         
         virtual void exec();
 };
-#endif
 
+#endif
