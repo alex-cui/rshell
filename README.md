@@ -23,7 +23,7 @@ This program will continuously take a line of input from the user, and then pars
 
 If a connector is encountered, whatever command was constructed will become the child of the connector; and this connector will be pushed into a vector that will later be executed one by one.
 
-If a pound symbol is encountered, the program will check if the word is the pound itself, or if the word consists of it. Either way, it will be parsed accordingly, pushing whatever command that exists into the execution vector,
+If a pound symbol is encountered, the program will check if the word is the pound itself, or if the word consists of it. Either way, it will be parsed accordingly, pushing whatever command that exists before the pound into the execution vector,
 
 Lastly, if a semicolon is encountered, the command will simply be pushed into the vector, and start anew.
 
@@ -31,11 +31,14 @@ Every command will be executed by using execvp. We will first make a fork to dup
 
 When the loop is broken by using the special exit command, the program will simply end.
 
+When 
+
+
 
 ## Known Bugs
 ------------
 
-The only bug we have found so far is when a user enters an invalid command and tries to exit the rshell after, they must type exit twice.
+The bug that still remains is the exit bug, where after encountering a failed command, you must type "exit" for the amount of failed commands, + 1. The reason for this is unknown.
 
 ## Authors
 ------------
