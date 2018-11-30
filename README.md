@@ -19,7 +19,7 @@ $ ./rshell
 ## Overview
 ------------
 
-##Guidelines and Info
+## Guidelines and Info
 ------------
 This program will continuously take a line of input from the user, and then parse that string using strtok, which separates the sentence by whitespace.  It will check if the word is or consists of #, ;, &&, or a || . 
 
@@ -36,8 +36,8 @@ If a parentheses is encountered, the order of operations is changed. So, we will
 When the loop is broken by using the special exit command, the program will simply end.
 
 
-##Execution 
---------------
+## Execution 
+------------
 Normal commands will be executed by using execvp. We will first make a fork to duplicate the program. We will check the PID as the child program has a PID of 0, and the parent program has a PID of greater than 0. We will execute the command only in the child program, as a program ends when a system call is used. We error check by using perror after each system call, as it will not give any error message without it.
 
 Both connectors will be executed by returning a bool based on the last command's success. 
