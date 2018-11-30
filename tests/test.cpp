@@ -135,7 +135,7 @@ void parse(char* c, Precedence* p) {
     p->add(cmd);
 }
 
-int mainFunc(string input) {
+int mainFunc(string input, char* &c) {
     vector <Base*> v;
 
     Command* cmd = new Command();
@@ -148,7 +148,7 @@ int mainFunc(string input) {
     string ORsym = "||";
     string openBrack = "[";
     string closeBrack = "]";
-    char *c = 0;
+    //char *c = 0;
     
     if (input != "") {
     	c = &input.at(0);
@@ -265,28 +265,77 @@ int mainFunc(string input) {
 
 TEST(VectorTest, oneCmd) {
     string input = "echo A";
+    char* c = 0;
     int vSize = 0;
-    vSize = mainFunc(input);
+    vSize = mainFunc(input, c);
 
     EXPECT_EQ(1, vSize);
 }
 
 TEST(VectorTest, twoCmd) {
     string input = "echo A && echo B";
+    char* c = 0;
     int vSize = 0;
-    vSize = mainFunc(input);
+    vSize = mainFunc(input, c);
     
     EXPECT_EQ(3, vSize);
 }
 
 TEST(VectorTest, threeCmd) {
     string input = "echo A && echo B || echo C";
+    char* c = 0;
     int vSize = 0;
-    vSize = mainFunc(input);
+    vSize = mainFunc(input, c);
 
     EXPECT_EQ(5, vSize);
 }
 
+//test hasCommand function
+TEST(FuncTest, hasCmd) {
+    Command* Cmd = new Command();
+    int tVal = 0;
+    char* c = "echo A\0";
+    Cmd->addCmd(c);
+    if (Cmd->hasCommand()) {
+	tVal = 1;
+    }
+    EXPECT_EQ(1, tVal);	 
+}
+TEST(FuncTest, noCmd) {
+    Command* Cmd = new Command();
+    int tVal = 0;
+    if (Cmd->hasCommand()){
+	tVal = 1;
+    }
+    EXPECT_EQ(0, tVal);	
+}
+//check And connector
+TEST(ConnTest, TAnd) {
+    int tVal = 0;
+    Command* Cmd = new Command();
+    Cmd->addCmd("echo");
+    Cmd->addCmd("A");
+    Cmd->exec();
+    Connector* conn = new And(Cmd);
+   
+    if (conn->succeeded) {
+	tVal = 1;
+    }
+    EXPECT_EQ(1, tVal);
+}
+//command test code from main()
+TEST(TestComm, one) {
+    int tVal = 0;
+    Command* cmd = new Command();
+    char c[] = "-e\0";
+    if ((c[0] == '-') && (c[2] == '\0')) {
+      cmd->addFlag(c[1]);
+    }	
+    if (cmd->getFlag() == 'e') {
+	tVal = 1;
+    }
+    EXPECT_EQ(1, tVal);
+}
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

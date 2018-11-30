@@ -27,7 +27,7 @@ class Command : public Base {
         
         void addCmd(char* c);
         void addFlag(char f);
-
+        char getFlag(); //used for testing
         bool hasCommand();
         
         virtual void exec();

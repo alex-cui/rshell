@@ -20,6 +20,10 @@ bool Command::hasCommand() {
     return true;
 }
 
+char Command::getFlag() {
+    return testFlag;
+}
+
 void Command::exec() {    
     string temp = "exit";
 
