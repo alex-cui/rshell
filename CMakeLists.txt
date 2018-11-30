@@ -18,8 +18,8 @@ ADD_EXECUTABLE(test
     src/connector.cpp
     src/and.cpp
     src/or.cpp
-    src/semicolon.cpp
     src/command.cpp
+    src/precedence.cpp
     src/test.cpp
     tests/test.cpp
 )
