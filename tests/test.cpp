@@ -325,7 +325,6 @@ TEST(ConnTest, TAnd) {
     string input = "echo A";
     char* c = &input.at(0);
     Cmd->addCmd(c);
-    Cmd->exec();
     Connector* conn = new And(Cmd);
    
     if (conn->succeeded) {
