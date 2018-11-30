@@ -262,7 +262,7 @@ int mainFunc(string input, char* &c) {
 
     return v.size();
 }
-
+//test if vector get appropriate numbers of commands
 TEST(VectorTest, oneCmd) {
     string input = "echo A";
     char* c = 0;
