@@ -37,7 +37,6 @@ void parse(char* c, Precedence* p) {
     string closeBrack = "]";
     string input = "";
 
-    Connector* conn = 0;
     Command* cmd = new Command();
     Precedence* pre = new Precedence();
 
@@ -49,7 +48,7 @@ void parse(char* c, Precedence* p) {
             parse(c, pre);
 
             pre->add(p);
-            p = new Precedence();
+            delete p;
         }
         else if (c == test) {
             c = strtok(0, " "); 
@@ -95,26 +94,21 @@ void parse(char* c, Precedence* p) {
             c[strlen(c) - 1] = '\0'; 
                     
             cmd->addCmd(c);
+
             p->add(cmd);
-            
-            conn = new Semicolon(cmd);
-            p->add(conn);
+            p->add(new Semicolon(cmd));
                     
             cmd = new Command();
         }
         else if (c == ANDsym) {
             p->add(cmd); 
-
-            conn = new And(cmd);
-            p->add(conn);
+            p->add(new And(cmd));
                 
             cmd = new Command();
         }
         else if (c == ORsym) {
             p->add(cmd);
-
-            conn = new Or(cmd);
-            p->add(conn);
+            p->add(new Or(cmd));
                 
             cmd = new Command();
         }
@@ -123,13 +117,13 @@ void parse(char* c, Precedence* p) {
         }
 
         c = strtok (0, " ");
-     }
+    }
 
-     //now get last command
-     c[strlen(c) - 1] = '\0';
-     cmd->addCmd(c);
+    //now get last command
+    c[strlen(c) - 1] = '\0';
+    cmd->addCmd(c);
 
-     p->add(cmd);
+    p->add(cmd);
 }
 
 
@@ -137,7 +131,6 @@ void parse(char* c, Precedence* p) {
 int main() {
     vector <Base*> v;
 
-    Connector* conn = 0;
     Command* cmd = new Command();
     Precedence* p = new Precedence();
 
@@ -216,26 +209,21 @@ int main() {
                 c[strlen(c) - 1] = '\0'; 
                     
                 cmd->addCmd(c);
-                v.push_back(cmd); //command is completed
 
-                conn = new Semicolon(cmd);
-                v.push_back(conn);
+                v.push_back(cmd); //command is completed
+                v.push_back(new Semicolon(cmd));
                     
                 cmd = new Command(); //reset cmd
             }
             else if (c == ANDsym) {
                 v.push_back(cmd); //command is completed
-
-                conn = new And(cmd);
-                v.push_back(conn);
+                v.push_back(new And(cmd));
                 
                 cmd = new Command();
             }
             else if (c == ORsym) {
                 v.push_back(cmd); //command is completed
-
-                conn = new Or(cmd);
-                v.push_back(conn);
+                v.push_back(new Or(cmd));
                 
                 cmd = new Command();
             }
@@ -252,6 +240,7 @@ int main() {
             cmd = new Command();
         } 
 
+cout << v.size() << "@@@@" << endl;
         //outputs
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();

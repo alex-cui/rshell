@@ -10,7 +10,7 @@ using namespace std;
 
 class Precedence : public Base {
     protected:
-	vector <Base*> v; //hold commands/connectors inside ()
+	    vector <Base*> v; //hold commands/connectors inside ()
 
     public:
         Precedence();
