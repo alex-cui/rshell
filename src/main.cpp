@@ -144,7 +144,7 @@ int main() {
     vector <Base*> v;
 
     Command* cmd = new Command();
-    Precedence* p = 0;
+    Precedence* p = new Precedence();
 
     char semicolon[] = ";"; //automatically fills in NULL
     char pound[] = "#";
@@ -287,7 +287,6 @@ int main() {
             }
         }
 
-// v.at(0)->exec();
         v.clear(); //clears vector for next getline
     }
 
