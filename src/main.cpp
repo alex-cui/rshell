@@ -137,6 +137,8 @@ void parse(char* c, Precedence* p) {
      p->add(cmd);
 }
 
+
+
 int main() {
     vector <Base*> v; //holds every command and connector for execution
 
@@ -163,7 +165,15 @@ int main() {
 
 	//parses the string
         while (c != 0) {
-            if (c == test) {
+            if (c[0] == '(') {
+                c += 1; //move over 1 from ()
+
+                //if hit the closing paranthesis
+                parse(c, p);
+
+                v.push_back(p);
+            }
+	    if (c == test) {
                 c = strtok(0, " "); 
 
                 cmd = new Test(); 
@@ -176,7 +186,19 @@ int main() {
 
                 cmd->addCmd(c); //test should be one command
             }
-            else if (c == openBrack) {
+            else if (strpbrk(c, pound) != NULL) {
+		//dont want to add # as command
+                if (c[0] == '#') {
+                    break;
+                }
+                else {
+                    c[charIndex(&c[0], pound)] = '\0';
+                        
+                    cmd->addCmd(c); //add possible command before c
+                    break;
+                }
+            }
+	    else if (c == openBrack) {
                 c = strtok(0, " "); 
 
                 cmd = new Test();
@@ -192,18 +214,6 @@ int main() {
                 while (c != closeBrack) {
                     c = strtok(0, " "); 
                     cmd->addCmd(c);
-                }
-            }
-            else if (strpbrk(c, pound) != NULL) {
-		//dont want to add # as command
-                if (c[0] == '#') {
-                    break;
-                }
-                else {
-                    c[charIndex(&c[0], pound)] = '\0';
-                        
-                    cmd->addCmd(c); //add possible command before c
-                    break;
                 }
             }
             else if (strpbrk(c, semicolon) != NULL) {
