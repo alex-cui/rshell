@@ -289,6 +289,14 @@ TEST(VectorTest, threeCmd) {
 
     EXPECT_EQ(5, vSize);
 }
+TEST(VectorTest, fourCmd) {
+    string input = "echo A && echo B || echo C && echo D";
+    char* c = 0;
+    int vSize = 0;
+    vSize = mainFunc(input, c);
+
+    EXPECT_EQ(7, vSize);
+}
 
 //test hasCommand function
 TEST(FuncTest, hasCmd) {
