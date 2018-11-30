@@ -18,9 +18,9 @@
 using namespace std;
 
 int charIndex(char* temp, char c[]) {
-    int counter = -1;
+    int counter = 0;
     
-    while (*temp != '\0') {
+    while (*temp != *c) {
         temp += 1;
         counter += 1;
     }
@@ -43,13 +43,14 @@ void parse(char* c, Precedence* p) {
 
     while (c[strlen(c) - 1] != ')') {
         if (c[0] == '(') {
-            c += 1; 
+            c += 1; //move over 1 from ()
 
-            parse(c, pre); //nested parenthesis
+            //nested parenthesis
+            parse(c, pre);
 
             pre->add(p);
-            p = new Precedence();        
-	}
+            p = new Precedence();
+        }
         else if (c == test) {
             c = strtok(0, " "); 
 
@@ -62,13 +63,13 @@ void parse(char* c, Precedence* p) {
 
             cmd->addCmd(c);
         }
-        else if (strpbrk(c, "#") != NULL) {
+        if (strpbrk(c, "#") != NULL) {
             if (c[0] == '#') {
                 return;
-            }
-            else {
+            } 
+            else {    
                 c[charIndex(&c[0], pound)] = '\0';
-
+                    
                 cmd->addCmd(c);
                 return;
             }
@@ -95,7 +96,7 @@ void parse(char* c, Precedence* p) {
                     
             cmd->addCmd(c);
             p->add(cmd);
-
+            
             conn = new Semicolon(cmd);
             p->add(conn);
                     
@@ -134,8 +135,7 @@ void parse(char* c, Precedence* p) {
 
 
 int main() {
-    cout << "hi";
-    vector <Base*> v; //holds every command and connector for execution
+    vector <Base*> v;
 
     Connector* conn = 0;
     Command* cmd = new Command();
@@ -151,7 +151,6 @@ int main() {
     string input = "";
     char *c = 0;
 
-    //main loop-- ends when exit is entered
     while (getline(cin, input)) {
         if (input != "") {
             c = &input.at(0);
@@ -159,7 +158,7 @@ int main() {
 
         strtok(c, " "); 
 
-	//parses the string
+        //main loop that parses string 
         while (c != 0) {
             if (c[0] == '(') {
                 c += 1; //move over 1 from ()
@@ -168,34 +167,33 @@ int main() {
                 parse(c, p);
 
                 v.push_back(p);
-		p = new Precedence();
+                p = new Precedence();
             }
-	    if (c == test) {
+            else if (c == test) {
                 c = strtok(0, " "); 
 
-                cmd = new Test(); 
+                cmd = new Test(); //now will exec() like test
 
-		//add flag if specified, else -e
+                //add flag if specified, -e otherwise
                 if ((c[0] == '-') && (c[2] == '\0')) {
                     cmd->addFlag(c[1]);
                     c = strtok(0, " "); 
                 }
 
-                cmd->addCmd(c); //test should be one command
+                cmd->addCmd(c); //points to same location
             }
             else if (strpbrk(c, pound) != NULL) {
-		//dont want to add # as command
                 if (c[0] == '#') {
                     break;
-                }
-                else {
+                } //dont want to add # as command!
+                else {    
                     c[charIndex(&c[0], pound)] = '\0';
                         
                     cmd->addCmd(c); //add possible command before c
                     break;
                 }
             }
-	    else if (c == openBrack) {
+            else if (c == openBrack) {
                 c = strtok(0, " "); 
 
                 cmd = new Test();
@@ -207,26 +205,26 @@ int main() {
 
                 cmd->addCmd(c);
 
-		//only difference from test
+                //only 2 differences from test
                 while (c != closeBrack) {
                     c = strtok(0, " "); 
                     cmd->addCmd(c);
                 }
             }
             else if (strpbrk(c, semicolon) != NULL) {
-		//semicolon should ALWAYS be at the end b/c no space after
+		        //semicolon should ALWAYS be at the end b/c no space after
                 c[strlen(c) - 1] = '\0'; 
                     
                 cmd->addCmd(c);
-                v.push_back(cmd); //command is complete
+                v.push_back(cmd); //command is completed
 
                 conn = new Semicolon(cmd);
-                v.push_back(conn); 
+                v.push_back(conn);
                     
-                cmd = new Command(); //reset command
+                cmd = new Command(); //reset cmd
             }
             else if (c == ANDsym) {
-                v.push_back(cmd);
+                v.push_back(cmd); //command is completed
 
                 conn = new And(cmd);
                 v.push_back(conn);
@@ -234,7 +232,7 @@ int main() {
                 cmd = new Command();
             }
             else if (c == ORsym) {
-                v.push_back(cmd);
+                v.push_back(cmd); //command is completed
 
                 conn = new Or(cmd);
                 v.push_back(conn);
@@ -242,31 +240,30 @@ int main() {
                 cmd = new Command();
             }
             else {
-                cmd->addCmd(c);
+                cmd->addCmd(c); //keep building commands as possible flag
             }
-
-            c = strtok (0, " "); //keep parsing string
+            
+            c = strtok (0, " ");
         }
 
-	//checks for last command without connector
+        //checks for last command without connector
         if (cmd->hasCommand()) {
             v.push_back(cmd);         
             cmd = new Command();
         } 
 
-	//output loop
+        //outputs
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
-	    //if a command failed or conenctor is false
-	    //only connectors should have a child
+            //if a command failed or connector is false
             while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
                 if (v.size() == 1) {
                     break;
                 }
                 else if (i == (v.size() - 2)) {
                     v.pop_back();
-	            break; 
+                    break;
                 }
                 else {
                     i += 2; //moves 2 since next is command
@@ -274,7 +271,7 @@ int main() {
                     v.at(i)->exec();
                 }
             }
-	}
+        }
 
         v.clear(); //clears vector for next getline
     }
