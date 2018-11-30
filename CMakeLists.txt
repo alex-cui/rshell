@@ -9,9 +9,9 @@ ADD_EXECUTABLE(rshell
     src/connector.cpp
     src/and.cpp
     src/or.cpp
-    src/semicolon.cpp
     src/command.cpp
     src/test.cpp
+    src/precedence.cpp
 )
 
 ADD_EXECUTABLE(test

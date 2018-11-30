@@ -2,10 +2,12 @@
 
 Or::Or() {
     lhs = 0;
+    id = "or";
 }
 
 Or::Or(Base* left) {
     lhs = left;
+    id = "or";
 }
 
 //executes right if left fails

@@ -20,7 +20,7 @@ using namespace std;
 class Command : public Base {
     protected:
         vector <char*> cmd; //accounts for flags
-	char testFlag;
+	    char testFlag;
         
     public:
         Command();

@@ -21,11 +21,10 @@ bool Command::hasCommand() {
 }
 
 void Command::exec() {    
-    string s = cmd.at(0);
     string temp = "exit";
 
     //end program if cmd is EXIT
-    if (s == temp) {
+    if (cmd.at(0) == temp) {
         exit(0);
     }
 
@@ -33,7 +32,6 @@ void Command::exec() {
     //cause it to end, so we have a dummy program to do it and be killed 
     //while we keep the main program
     pid_t pid = fork();
-
 
     if (pid == 0) { //child
         char* cstr[cmd.size() + 1];
