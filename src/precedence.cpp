@@ -8,6 +8,13 @@ void Precedence::add(Base* b) {
     v.push_back(b);
 }
 
+bool Precedence::isEmpty() {
+    if (v.empty()) {
+        return true;
+    }
+    return false;
+}
+
 void Precedence::exec() {
     //then only one command
     for (unsigned i = 0; i < v.size(); ++i) {
@@ -15,7 +22,7 @@ void Precedence::exec() {
 
             if (v.at(i)->id == "and") {
                 if (v.at(i)->lhs->succeeded) {
-                    ++i;
+                    ++i; //should be command
 
                     v.at(i)->exec();
                     succeeded = v.at(i)->succeeded;

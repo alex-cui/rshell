@@ -16,6 +16,7 @@ class Precedence : public Base {
         Precedence();
         
         void add(Base* b);
+        bool isEmpty();
         
         virtual void exec();
 };
