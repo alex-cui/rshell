@@ -3,7 +3,6 @@
 #include "../header/connector.h"
 #include "../header/and.h"
 #include "../header/or.h"
-#include "../header/semicolon.h"
 
 #include "../header/command.h"
 
