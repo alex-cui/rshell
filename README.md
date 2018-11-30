@@ -16,8 +16,6 @@ $ make
 $ ./rshell
 ```
 
-## Overview
-------------
 
 ## Guidelines and Info
 ------------
