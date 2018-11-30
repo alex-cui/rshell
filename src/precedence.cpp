@@ -26,6 +26,13 @@ void Precedence::exec() {
 
                     v.at(i)->exec();
                     succeeded = v.at(i)->succeeded;
+
+                    if (succeeded) {
+                        cout << "YES" << endl;
+                    }
+                    else {
+                        cout << "NO" << endl;
+                    }
                 }
                 else {
                     succeeded = false;

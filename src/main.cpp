@@ -43,11 +43,10 @@ void parse(char* c, Precedence* p) {
         if (c[0] == '(') {
             c += 1; //move over 1 from ()
 
+            p = new Precedence();
+
             //nested parenthesis
             parse(c, pre);
-
-            pre->add(p);
-            delete p;
         }
         else if (c == test) {
             c = strtok(0, " "); 
@@ -98,16 +97,32 @@ void parse(char* c, Precedence* p) {
             cmd = new Command();
         }
         else if (c == ANDsym) {
-            p->add(cmd); 
-            p->add(new And(cmd));
-                
-            cmd = new Command();
+            if (!p->isEmpty()) {
+                p->add(pre);
+                p->add(new And(p));
+
+                p = new Precedence();
+            }
+            else {
+                p->add(cmd); //command is completed
+                p->add(new And(cmd));
+                    
+                cmd = new Command();
+            }
         }
         else if (c == ORsym) {
-            p->add(cmd);
-            p->add(new Or(cmd));
+            if (!p->isEmpty()) {
+                p->add(pre);
+                p->add(new Or(p));
                 
-            cmd = new Command();
+                p = new Precedence();
+            }
+            else {
+                p->add(cmd); //command is completed
+                p->add(new Or(cmd));
+                    
+                cmd = new Command();
+            }
         }
         else {
             cmd->addCmd(c);
@@ -244,7 +259,12 @@ int main() {
         if (cmd->hasCommand()) {
             v.push_back(cmd);         
             cmd = new Command();
-        } 
+        }
+
+        //checks for precedence operator without connector
+        if (!p->isEmpty()) {
+            v.push_back(p);
+        }
 
         // outputs
         for (unsigned i = 0; i < v.size(); ++i) {
