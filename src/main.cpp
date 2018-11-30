@@ -42,18 +42,7 @@ void parse(char* c, Precedence* p) {
     Precedence* pre = new Precedence();
 
     while (c[strlen(c) - 1] != ')') {
-        if (strpbrk(c, "#") != NULL) {
-            if (c[0] == '#') {
-                return;
-            } 
-            else {    
-                c[charIndex(&c[0], pound)] = '\0';
-                    
-                cmd->addCmd(c);
-                return;
-            }
-        }
-        else if (c[0] == '(') {
+        if (c[0] == '(') {
             c = strtok(0, " ");
 
             while (c[strlen(c) - 1] != ')') {
@@ -78,6 +67,17 @@ void parse(char* c, Precedence* p) {
             }
 
             cmd->addCmd(c);
+        }
+        else if (strpbrk(c, "#") != NULL) {
+            if (c[0] == '#') {
+                return;
+            }
+            else {
+                c[charIndex(&c[0], pound)] = '\0';
+
+                cmd->addCmd(c);
+                return;
+            }
         }
         else if (c == openBrack) {
             c = strtok(0, " "); 
@@ -144,6 +144,7 @@ int main() {
 
     Connector* conn = 0;
     Command* cmd = new Command();
+    Precedence* p = new Precedence();
 
     char semicolon[] = ";"; //automatically fills in NULL
     char pound[] = "#";
@@ -152,7 +153,7 @@ int main() {
     string ORsym = "||";
     string openBrack = "[";
     string closeBrack = "]";
-    string input;
+    string input = "";
     char *c = 0;
 
     //main loop-- ends when exit is entered
@@ -261,22 +262,23 @@ int main() {
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
-	//if a command failed or conenctor is false
-	//only connectors should have a child
-        while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
-            if (v.size() == 1) {
-                break;
+	    //if a command failed or conenctor is false
+	    //only connectors should have a child
+            while (!(v.at(i)->succeeded) && (v.at(i)->lhs != 0)) {
+                if (v.size() == 1) {
+                    break;
+                }
+                else if (i == (v.size() - 2)) {
+                    v.pop_back();
+	            break; 
+                }
+                else {
+                    i += 2; //moves 2 since next is command
+                    v.at(i)->lhs = v.at(i - 2)->lhs;
+                    v.at(i)->exec();
+                }
             }
-            else if (i == (v.size() - 2)) {
-                v.pop_back();
-	        break; 
-            }
-            else {
-                i += 2; //moves 2 since next is command
-                v.at(i)->lhs = v.at(i - 2)->lhs;
-                v.at(i)->exec();
-            }
-        }
+	}
 
         v.clear(); //clears vector for next getline
     }

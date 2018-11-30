@@ -4,7 +4,7 @@ Precedence::Precedence() {
     lhs = 0;
 }
 
-void Precedence::addPrecCmd(Base* b) {
+void Precedence::add(Base* b) {
     v.push_back(b);
 }
 
