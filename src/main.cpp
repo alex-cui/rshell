@@ -43,19 +43,13 @@ void parse(char* c, Precedence* p) {
 
     while (c[strlen(c) - 1] != ')') {
         if (c[0] == '(') {
-            c = strtok(0, " ");
+            c += 1; 
 
-            while (c[strlen(c) - 1] != ')') {
-                parse(c, pre);
+            parse(c, pre); //nested parenthesis
 
-                c = strtok(0, " ");
-            }
-
-            c[strlen(c) - 1] = '\0';
-            cmd->addCmd(c);
-
-            p->add(cmd);
-        }
+            pre->add(p);
+            p = new Precedence();        
+	}
         else if (c == test) {
             c = strtok(0, " "); 
 
@@ -173,6 +167,7 @@ int main() {
                 parse(c, p);
 
                 v.push_back(p);
+		p = new Precedence();
             }
 	    if (c == test) {
                 c = strtok(0, " "); 
