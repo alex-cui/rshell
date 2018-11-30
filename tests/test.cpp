@@ -302,7 +302,8 @@ TEST(VectorTest, fourCmd) {
 TEST(FuncTest, hasCmd) {
     Command* Cmd = new Command();
     int tVal = 0;
-    char* c = "echo A\0";
+    string input = "echo A\0";
+    char* c = &input.at(0);
     Cmd->addCmd(c);
     if (Cmd->hasCommand()) {
 	tVal = 1;
@@ -321,8 +322,9 @@ TEST(FuncTest, noCmd) {
 TEST(ConnTest, TAnd) {
     int tVal = 0;
     Command* Cmd = new Command();
-    Cmd->addCmd("echo");
-    Cmd->addCmd("A");
+    string input = "echo A";
+    char* c = &input.at(0);
+    Cmd->addCmd(c);
     Cmd->exec();
     Connector* conn = new And(Cmd);
    
