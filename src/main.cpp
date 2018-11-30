@@ -3,7 +3,6 @@
 #include "../header/connector.h"
 #include "../header/and.h"
 #include "../header/or.h"
-#include "../header/semicolon.h"
 
 #include "../header/command.h"
 #include "../header/test.h"
@@ -94,9 +93,7 @@ void parse(char* c, Precedence* p) {
             c[strlen(c) - 1] = '\0'; 
                     
             cmd->addCmd(c);
-
             p->add(cmd);
-            p->add(new Semicolon(cmd));
                     
             cmd = new Command();
         }
@@ -132,7 +129,7 @@ int main() {
     vector <Base*> v;
 
     Command* cmd = new Command();
-    Precedence* p = new Precedence();
+    Precedence* p = 0;
 
     char semicolon[] = ";"; //automatically fills in NULL
     char pound[] = "#";
@@ -156,11 +153,9 @@ int main() {
             if (c[0] == '(') {
                 c += 1; //move over 1 from ()
 
-                //if hit the closing paranthesis
-                parse(c, p);
-
-                v.push_back(p);
                 p = new Precedence();
+
+                parse(c, p); //forms precedence class which encapsulates all commands and connectors
             }
             else if (c == test) {
                 c = strtok(0, " "); 
@@ -205,27 +200,39 @@ int main() {
                 }
             }
             else if (strpbrk(c, semicolon) != NULL) {
-		        //semicolon should ALWAYS be at the end b/c no space after
+		        //semicolon should ALWAYS be at the end b/c ALWAYS space after
                 c[strlen(c) - 1] = '\0'; 
                     
                 cmd->addCmd(c);
-
                 v.push_back(cmd); //command is completed
-                v.push_back(new Semicolon(cmd));
                     
                 cmd = new Command(); //reset cmd
             }
             else if (c == ANDsym) {
-                v.push_back(cmd); //command is completed
-                v.push_back(new And(cmd));
-                
-                cmd = new Command();
+                if (!p->isEmpty()) {
+                    v.push_back(p);
+                    v.push_back(new And(p));
+                    p = new Precedence();
+                }
+                else {
+                    v.push_back(cmd); //command is completed
+                    v.push_back(new And(cmd));
+                    
+                    cmd = new Command();
+                }
             }
             else if (c == ORsym) {
-                v.push_back(cmd); //command is completed
-                v.push_back(new Or(cmd));
-                
-                cmd = new Command();
+                if (!p->isEmpty()) {
+                    v.push_back(p);
+                    v.push_back(new Or(p));
+                    p = new Precedence();
+                }
+                else {
+                    v.push_back(cmd); //command is completed
+                    v.push_back(new Or(cmd));
+                    
+                    cmd = new Command();
+                }
             }
             else {
                 cmd->addCmd(c); //keep building commands as possible flag
@@ -233,15 +240,13 @@ int main() {
             
             c = strtok (0, " ");
         }
-
         //checks for last command without connector
         if (cmd->hasCommand()) {
             v.push_back(cmd);         
             cmd = new Command();
         } 
 
-cout << v.size() << "@@@@" << endl;
-        //outputs
+        // outputs
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
@@ -262,6 +267,7 @@ cout << v.size() << "@@@@" << endl;
             }
         }
 
+// v.at(0)->exec();
         v.clear(); //clears vector for next getline
     }
 
