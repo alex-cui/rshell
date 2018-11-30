@@ -16,6 +16,7 @@
 
 using namespace std;
 
+//used to find a certain character in the command
 int charIndex(char* temp, char c[]) {
     int counter = 0;
     
@@ -26,6 +27,10 @@ int charIndex(char* temp, char c[]) {
     return counter;
 }
 
+//special loop to parse commands in parenthesis
+//very similar to main parsing loop in main
+//to encapsulate all commands into one node, we make every subsequent command
+//the lhs of Precedence* p
 void parse(char* c, Precedence* p) {
     char semicolon[] = ";";
     char pound[] = "#";
@@ -224,9 +229,11 @@ int main() {
                 cmd = new Command(); //reset cmd
             }
             else if (c == ANDsym) {
+                //in case a connector is attached to precedence
                 if (!p->isEmpty()) {
                     v.push_back(p);
                     v.push_back(new And(p));
+
                     p = new Precedence();
                 }
                 else {
@@ -237,9 +244,11 @@ int main() {
                 }
             }
             else if (c == ORsym) {
+                //in case a connector is attached to precedence
                 if (!p->isEmpty()) {
                     v.push_back(p);
                     v.push_back(new Or(p));
+
                     p = new Precedence();
                 }
                 else {
