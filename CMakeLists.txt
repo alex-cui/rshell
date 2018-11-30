@@ -15,6 +15,12 @@ ADD_EXECUTABLE(rshell
 )
 
 ADD_EXECUTABLE(test
+    src/connector.cpp
+    src/and.cpp
+    src/or.cpp
+    src/semicolon.cpp
+    src/command.cpp
+    src/test.cpp
     tests/test.cpp
 )
 
