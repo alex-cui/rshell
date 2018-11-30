@@ -134,6 +134,7 @@ void parse(char* c, Precedence* p) {
 
 
 int main() {
+    cout << "hi";
     vector <Base*> v; //holds every command and connector for execution
 
     Connector* conn = 0;
