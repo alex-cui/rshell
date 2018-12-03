@@ -248,7 +248,7 @@ int mainFunc(string input, char* &c) {
             c = strtok (0, " ");
         }
         
-        if (cmd->hasCommand()) {
+        if (!cmd->isEmpty()) {
             v.push_back(cmd);
             cmd = new Command();
         }
@@ -305,7 +305,7 @@ TEST(FuncTest, hasCmd) {
     string input = "echo A\0";
     char* c = &input.at(0);
     Cmd->addCmd(c);
-    if (Cmd->hasCommand()) {
+    if (!Cmd->isEmpty()) {
 	tVal = 1;
     }
     EXPECT_EQ(1, tVal);	 
@@ -313,7 +313,7 @@ TEST(FuncTest, hasCmd) {
 TEST(FuncTest, noCmd) {
     Command* Cmd = new Command();
     int tVal = 0;
-    if (Cmd->hasCommand()){
+    if (!Cmd->isEmpty()){
 	tVal = 1;
     }
     EXPECT_EQ(0, tVal);	

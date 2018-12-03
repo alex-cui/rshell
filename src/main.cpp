@@ -20,7 +20,7 @@ using namespace std;
 int charIndex(char* temp, char c[]) {
     int counter = 0;
     
-    while (*temp != *c) {
+    while (*temp != *c && *temp != '\0') {
         temp += 1;
         counter += 1;
     }
@@ -31,24 +31,23 @@ int charIndex(char* temp, char c[]) {
 //very similar to main parsing loop in main
 //to encapsulate all commands into one node, we make every subsequent command
 //the lhs of Precedence* p
-void parse(char* c, Precedence* p) {
+void parse(char* c, Precedence* vec) {
     char semicolon[] = ";";
     char pound[] = "#";
     string test = "test";   
     string ANDsym = "&&";
     string ORsym = "||";
     string openBrack = "[";
-    string closeBrack = "]";
+    char closeBrack[] = "]";
+    char closePrec[] = ")";
     string input = "";
 
     Command* cmd = new Command();
     Precedence* pre = new Precedence();
 
-    while (c[strlen(c) - 1] != ')') {
+    while (strpbrk(c,")") == NULL) {
         if (c[0] == '(') {
             c += 1; //move over 1 from ()
-
-            p = new Precedence();
 
             //nested parenthesis
             parse(c, pre);
@@ -86,45 +85,40 @@ void parse(char* c, Precedence* p) {
                 c = strtok(0, " "); 
             }
 
-            cmd->addCmd(c);
-
-            while (c != closeBrack) {
-                c = strtok(0, " "); 
-                cmd->addCmd(c);
-            }
+            cmd->addCmd(c); //next should be ]
         }
         else if (strpbrk(c, semicolon) != NULL) {
             c[strlen(c) - 1] = '\0'; 
                     
             cmd->addCmd(c);
-            p->add(cmd);
+            vec->add(cmd);
                     
             cmd = new Command();
         }
         else if (c == ANDsym) {
-            if (!p->isEmpty()) {
-                p->add(pre);
-                p->add(new And(p));
+            if (!vec->isEmpty()) {
+                vec->add(pre);
+                vec->add(new And(vec));
 
-                p = new Precedence();
+                vec = new Precedence();
             }
             else {
-                p->add(cmd); //command is completed
-                p->add(new And(cmd));
+                vec->add(cmd); //command is completed
+                vec->add(new And(cmd));
                     
                 cmd = new Command();
             }
         }
         else if (c == ORsym) {
-            if (!p->isEmpty()) {
-                p->add(pre);
-                p->add(new Or(p));
+            if (!vec->isEmpty()) {
+                vec->add(pre);
+                vec->add(new Or(vec));
                 
-                p = new Precedence();
+                vec = new Precedence();
             }
             else {
-                p->add(cmd); //command is completed
-                p->add(new Or(cmd));
+                vec->add(cmd); //command is completed
+                vec->add(new Or(cmd));
                     
                 cmd = new Command();
             }
@@ -132,15 +126,15 @@ void parse(char* c, Precedence* p) {
         else {
             cmd->addCmd(c);
         }
-
         c = strtok (0, " ");
     }
 
     //now get last command
-    c[strlen(c) - 1] = '\0';
-    cmd->addCmd(c);
+    c[charIndex(&c[0], closePrec)] = '\0';
 
-    p->add(cmd);
+    // c[strlen(c) - 1] = '\0';
+    cmd->addCmd(c);
+    vec->add(cmd); //build commands in parentheses
 }
 
 
@@ -172,8 +166,6 @@ int main() {
         while (c != 0) {
             if (c[0] == '(') {
                 c += 1; //move over 1 from ()
-
-                p = new Precedence();
 
                 parse(c, p); //forms precedence class which encapsulates all commands and connectors
             }
@@ -265,7 +257,7 @@ int main() {
             c = strtok (0, " ");
         }
         //checks for last command without connector
-        if (cmd->hasCommand()) {
+        if (!cmd->isEmpty()) {
             v.push_back(cmd);         
             cmd = new Command();
         }
@@ -296,7 +288,10 @@ int main() {
             }
         }
 
-        v.clear(); //clears vector for next getline
+        //reset
+        p = new Precedence();
+        cmd = new Command();
+        v.clear(); 
     }
 
     return 0;

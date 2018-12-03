@@ -13,11 +13,11 @@ void Command::addFlag(char f) {
     testFlag = f;
 }
 
-bool Command::hasCommand() {
+bool Command::isEmpty() {
     if (cmd.size() == 0) {
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 char Command::getFlag() {
