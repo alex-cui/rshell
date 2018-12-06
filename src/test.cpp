@@ -1,9 +1,6 @@
 #include "../header/test.h"
 
-Test::Test() {
-    testFlag = 'e';
-    lhs = 0;
-}
+Test::Test() : Command() {}
 
 void Test::exec() {
     const char* temp = cmd.at(0);
