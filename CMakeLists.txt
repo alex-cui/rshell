@@ -11,17 +11,17 @@ ADD_EXECUTABLE(rshell
     src/or.cpp
     src/command.cpp
     src/test.cpp
-    src/precedence.cpp
+    src/parenthesis.cpp
 )
 
 ADD_EXECUTABLE(test
+    tests/test.cpp
     src/connector.cpp
     src/and.cpp
     src/or.cpp
     src/command.cpp
-    src/precedence.cpp
+    src/parenthesis.cpp
     src/test.cpp
-    tests/test.cpp
 )
 
 TARGET_LINK_LIBRARIES(test gtest)

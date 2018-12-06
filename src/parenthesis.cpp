@@ -1,21 +1,21 @@
-#include "../header/precedence.h"
+#include "../header/parenthesis.h"
 
-Precedence::Precedence() {
+Parenthesis::Parenthesis() {
     lhs = 0;
 }
 
-void Precedence::add(Base* b) {
+void Parenthesis::add(Base* b) {
     v.push_back(b);
 }
 
-bool Precedence::isEmpty() {
+bool Parenthesis::isEmpty() {
     if (v.empty()) {
         return true;
     }
     return false;
 }
 
-void Precedence::exec() {
+void Parenthesis::exec() {
     //then only one command
     for (unsigned i = 0; i < v.size(); ++i) {
         v.at(i)->exec();

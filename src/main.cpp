@@ -7,7 +7,7 @@
 #include "../header/command.h"
 #include "../header/test.h"
 
-#include "../header/precedence.h"
+#include "../header/parenthesis.h"
 
 #include <iostream>
 #include <string>
@@ -30,8 +30,8 @@ int charIndex(char* temp, char c[]) {
 //special loop to parse commands in parenthesis
 //very similar to main parsing loop in main
 //to encapsulate all commands into one node, we make every subsequent command
-//the lhs of Precedence* p
-void parse(char* c, Precedence* vec) {
+//the lhs of Parenthesis* p
+void parse(char* c, Parenthesis* vec, int skip) {
     char semicolon[] = ";";
     char pound[] = "#";
     string test = "test";   
@@ -43,14 +43,15 @@ void parse(char* c, Precedence* vec) {
     string input = "";
 
     Command* cmd = new Command();
-    Precedence* pre = new Precedence();
+    Parenthesis* pre = new Parenthesis();
 
     while (strpbrk(c,")") == NULL) {
         if (c[0] == '(') {
             c += 1; //move over 1 from ()
 
             //nested parenthesis
-            parse(c, pre);
+            parse(c, pre, skip);
+            c += skip;
         }
         else if (c == test) {
             c = strtok(0, " "); 
@@ -100,7 +101,7 @@ void parse(char* c, Precedence* vec) {
                 vec->add(pre);
                 vec->add(new And(vec));
 
-                vec = new Precedence();
+                vec = new Parenthesis();
             }
             else {
                 vec->add(cmd); //command is completed
@@ -114,7 +115,7 @@ void parse(char* c, Precedence* vec) {
                 vec->add(pre);
                 vec->add(new Or(vec));
                 
-                vec = new Precedence();
+                vec = new Parenthesis();
             }
             else {
                 vec->add(cmd); //command is completed
@@ -126,6 +127,8 @@ void parse(char* c, Precedence* vec) {
         else {
             cmd->addCmd(c);
         }
+
+        skip += strlen(c - 1);
         c = strtok (0, " ");
     }
 
@@ -143,7 +146,7 @@ int main() {
     vector <Base*> v;
 
     Command* cmd = new Command();
-    Precedence* p = new Precedence();
+    Parenthesis* p = new Parenthesis();
 
     char semicolon[] = ";"; //automatically fills in NULL
     char pound[] = "#";
@@ -167,7 +170,7 @@ int main() {
             if (c[0] == '(') {
                 c += 1; //move over 1 from ()
 
-                parse(c, p); //forms precedence class which encapsulates all commands and connectors
+                parse(c, p, 0); //forms precedence class which encapsulates all commands and connectors
             }
             else if (c == test) {
                 c = strtok(0, " "); 
@@ -226,7 +229,7 @@ int main() {
                     v.push_back(p);
                     v.push_back(new And(p));
 
-                    p = new Precedence();
+                    p = new Parenthesis();
                 }
                 else {
                     v.push_back(cmd); //command is completed
@@ -241,7 +244,7 @@ int main() {
                     v.push_back(p);
                     v.push_back(new Or(p));
 
-                    p = new Precedence();
+                    p = new Parenthesis();
                 }
                 else {
                     v.push_back(cmd); //command is completed
@@ -289,7 +292,7 @@ int main() {
         }
 
         //reset
-        p = new Precedence();
+        p = new Parenthesis();
         cmd = new Command();
         v.clear(); 
     }

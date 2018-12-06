@@ -5,7 +5,7 @@
 #include "../header/or.h"
 
 #include "../header/test.h"
-#include "../header/precedence.h"
+#include "../header/parenthesis.h"
 #include "../header/command.h"
 #include <iostream>
 #include <string>
@@ -24,7 +24,7 @@ int charIndex(char* temp, char c[]) {
     return counter;
 }
 
-void parse(char* c, Precedence* p) {
+void parse(char* c, Parenthesis* p) {
     char semicolon[] = ";";
     char pound[] = "#";
     string test = "test";
@@ -35,13 +35,13 @@ void parse(char* c, Precedence* p) {
     string input = "";
 
     Command* cmd = new Command();
-    Precedence* pre = new Precedence();
+    Parenthesis* pre = new Parenthesis();
 
     while (c[strlen(c) - 1] != ')') {
         if (c[0] == '(') {
             c += 1; 
 
-            p = new Precedence();
+            p = new Parenthesis();
             
             
             parse(c, pre);
@@ -98,7 +98,7 @@ void parse(char* c, Precedence* p) {
                 p->add(pre);
                 p->add(new And(p));
 
-                p = new Precedence();
+                p = new Parenthesis();
             }
             else {
                 p->add(cmd); 
@@ -112,7 +112,7 @@ void parse(char* c, Precedence* p) {
                 p->add(pre);
                 p->add(new Or(p));
 
-                p = new Precedence();
+                p = new Parenthesis();
             }
             else {
                 p->add(cmd); 
@@ -139,7 +139,7 @@ int mainFunc(string input, char* &c) {
     vector <Base*> v;
 
     Command* cmd = new Command();
-    Precedence* p = new Precedence();
+    Parenthesis* p = new Parenthesis();
 
     char semicolon[] = ";";
     char pound[] = "#";
@@ -160,7 +160,7 @@ int mainFunc(string input, char* &c) {
             if (c[0] == '(') {
                 c += 1; 
 
-                p = new Precedence();
+                p = new Parenthesis();
 
                 parse(c, p);
             }
@@ -219,7 +219,7 @@ int mainFunc(string input, char* &c) {
                 if (!p->isEmpty()) {
                     v.push_back(p);
                     v.push_back(new And(p));
-                    p = new Precedence();
+                    p = new Parenthesis();
                 }
                 else {
                     v.push_back(cmd); 
@@ -232,7 +232,7 @@ int mainFunc(string input, char* &c) {
                 if (!p->isEmpty()) {
                     v.push_back(p);
                     v.push_back(new Or(p));
-                    p = new Precedence();
+                    p = new Parenthesis();
                 }
                 else {
                     v.push_back(cmd); 

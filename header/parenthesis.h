@@ -1,5 +1,5 @@
-#ifndef PRECEDENCE_H
-#define PRECEDENCE_H
+#ifndef PARENTHESIS_H
+#define PARENTHESIS_H
 
 #include <iostream>
 #include <vector>
@@ -8,12 +8,12 @@
 
 using namespace std;
 
-class Precedence : public Base {
+class Parenthesis : public Base {
     protected:
 	    vector <Base*> v; //hold commands/connectors inside ()
 
     public:
-        Precedence();
+        Parenthesis();
         
         void add(Base* b);
         bool isEmpty();
