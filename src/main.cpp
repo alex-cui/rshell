@@ -17,10 +17,10 @@
 using namespace std;
 
 //used to find a certain character in the command
-int charIndex(char* temp, char c[]) {
+int charIndex(char* temp, char c) {
     int counter = 0;
     
-    while (*temp != *c && *temp != '\0') {
+    while (*temp != c && *temp != '\0') {
         temp += 1;
         counter += 1;
     }
@@ -31,27 +31,32 @@ int charIndex(char* temp, char c[]) {
 //very similar to main parsing loop in main
 //to encapsulate all commands into one node, we make every subsequent command
 //the lhs of Parenthesis* p
-void parse(char* c, Parenthesis* vec, int skip) {
-    char semicolon[] = ";";
-    char pound[] = "#";
+void parse(char* c, Parenthesis* inside, int skip) {
     string test = "test";   
-    string ANDsym = "&&";
-    string ORsym = "||";
-    string openBrack = "[";
-    char closeBrack[] = "]";
-    char closePrec[] = ")";
     string input = "";
 
     Command* cmd = new Command();
     Parenthesis* pre = new Parenthesis();
 
     while (strpbrk(c,")") == NULL) {
+        if (strpbrk(c, "#") != NULL) {
+            if (c[0] == '#') {
+                return;
+            } 
+            else {    
+                c[charIndex(&c[0], '#')] = '\0';
+            }
+        }
+        if (strpbrk(c, ";") != NULL) {
+            c[strlen(c) - 1] = '\0'; 
+        }
+
         if (c[0] == '(') {
             c += 1; //move over 1 from ()
 
             //nested parenthesis
             parse(c, pre, skip);
-            c += skip;
+            c += skip; //idk
         }
         else if (c == test) {
             c = strtok(0, " "); 
@@ -65,18 +70,7 @@ void parse(char* c, Parenthesis* vec, int skip) {
 
             cmd->addCmd(c);
         }
-        if (strpbrk(c, "#") != NULL) {
-            if (c[0] == '#') {
-                return;
-            } 
-            else {    
-                c[charIndex(&c[0], pound)] = '\0';
-                    
-                cmd->addCmd(c);
-                return;
-            }
-        }
-        else if (c == openBrack) {
+        else if (*c == '[') {
             c = strtok(0, " "); 
 
             cmd = new Test();
@@ -87,39 +81,37 @@ void parse(char* c, Parenthesis* vec, int skip) {
             }
 
             cmd->addCmd(c); //next should be ]
-        }
-        else if (strpbrk(c, semicolon) != NULL) {
-            c[strlen(c) - 1] = '\0'; 
-                    
-            cmd->addCmd(c);
-            vec->add(cmd);
-                    
-            cmd = new Command();
-        }
-        else if (c == ANDsym) {
-            if (!vec->isEmpty()) {
-                vec->add(pre);
-                vec->add(new And(vec));
 
-                vec = new Parenthesis();
+            //only 2 differences from test
+            while (*c != ']') {
+                c = strtok(0, " "); 
+                cmd->addCmd(c);
+            }
+        }
+        else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
+            if (!inside->isEmpty()) {
+                inside->add(pre);
+                inside->add(new And(inside));
+
+                inside = new Parenthesis();
             }
             else {
-                vec->add(cmd); //command is completed
-                vec->add(new And(cmd));
+                inside->add(cmd); //command is completed
+                inside->add(new And(cmd));
                     
                 cmd = new Command();
             }
         }
-        else if (c == ORsym) {
-            if (!vec->isEmpty()) {
-                vec->add(pre);
-                vec->add(new Or(vec));
+        else if (c[0] == '|' && c[1] == '|' && c[2] == '\0') {
+            if (!inside->isEmpty()) {
+                inside->add(pre);
+                inside->add(new Or(inside));
                 
-                vec = new Parenthesis();
+                inside = new Parenthesis();
             }
             else {
-                vec->add(cmd); //command is completed
-                vec->add(new Or(cmd));
+                inside->add(cmd); //command is completed
+                inside->add(new Or(cmd));
                     
                 cmd = new Command();
             }
@@ -133,11 +125,10 @@ void parse(char* c, Parenthesis* vec, int skip) {
     }
 
     //now get last command
-    c[charIndex(&c[0], closePrec)] = '\0';
-
-    // c[strlen(c) - 1] = '\0';
+    c[charIndex(&c[0], ')')] = '\0';
     cmd->addCmd(c);
-    vec->add(cmd); //build commands in parentheses
+
+    inside->add(cmd); //build commands in parentheses
 }
 
 
@@ -148,17 +139,13 @@ int main() {
     Command* cmd = new Command();
     Parenthesis* p = new Parenthesis();
 
-    char semicolon[] = ";"; //automatically fills in NULL
-    char pound[] = "#";
     string test = "test";   
-    string ANDsym = "&&";
-    string ORsym = "||";
-    string openBrack = "[";
-    string closeBrack = "]";
     string input = "";
     char *c = 0;
 
+    //while quit when user puts "exit" (still obey connector rules)
     while (getline(cin, input)) {
+        //checks for empty input
         if (input != "") {
             c = &input.at(0);
         }
@@ -167,8 +154,24 @@ int main() {
 
         //main loop that parses string 
         while (c != 0) {
+            //for key words could be ANYWHERE
+            if (strpbrk(c, "#") != NULL) {
+                if (c[0] == '#') {
+                    break;
+                } //dont want to add # as command!
+                else {    
+                    //essentially cuts off everything after the #
+                    c[charIndex(&c[0], '#')] = '\0';
+                }
+            }
+            if (strpbrk(c, ";") != NULL) {
+		        //semicolon should ALWAYS be at the end b/c ALWAYS space after
+                c[strlen(c) - 1] = '\0'; 
+            }
+            
+            //for when all of c is the key word
             if (c[0] == '(') {
-                c += 1; //move over 1 from ()
+                c += 1; //move over 1 from (
 
                 parse(c, p, 0); //forms precedence class which encapsulates all commands and connectors
             }
@@ -185,18 +188,19 @@ int main() {
 
                 cmd->addCmd(c); //points to same location
             }
-            else if (strpbrk(c, pound) != NULL) {
-                if (c[0] == '#') {
-                    break;
-                } //dont want to add # as command!
-                else {    
-                    c[charIndex(&c[0], pound)] = '\0';
-                        
-                    cmd->addCmd(c); //add possible command before c
-                    break;
-                }
+            else if (*c == '<') {
+                
             }
-            else if (c == openBrack) {
+            else if (*c == '>') {
+                
+            }
+            else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
+
+            }
+            else if (*c == '|') {
+
+            }
+            else if (*c == '[') {
                 c = strtok(0, " "); 
 
                 cmd = new Test();
@@ -209,21 +213,12 @@ int main() {
                 cmd->addCmd(c);
 
                 //only 2 differences from test
-                while (c != closeBrack) {
+                while (*c != ']') {
                     c = strtok(0, " "); 
                     cmd->addCmd(c);
                 }
             }
-            else if (strpbrk(c, semicolon) != NULL) {
-		        //semicolon should ALWAYS be at the end b/c ALWAYS space after
-                c[strlen(c) - 1] = '\0'; 
-                    
-                cmd->addCmd(c);
-                v.push_back(cmd); //command is completed
-                    
-                cmd = new Command(); //reset cmd
-            }
-            else if (c == ANDsym) {
+            else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
                 //in case a connector is attached to precedence
                 if (!p->isEmpty()) {
                     v.push_back(p);
@@ -238,8 +233,8 @@ int main() {
                     cmd = new Command();
                 }
             }
-            else if (c == ORsym) {
-                //in case a connector is attached to precedence
+            else if (c[0] == '|' && c[1] == '|' && c[2] == '\0') {
+                //in case a connector is attached to parentheses
                 if (!p->isEmpty()) {
                     v.push_back(p);
                     v.push_back(new Or(p));
@@ -259,13 +254,13 @@ int main() {
             
             c = strtok (0, " ");
         }
+
         //checks for last command without connector
         if (!cmd->isEmpty()) {
             v.push_back(cmd);         
-            cmd = new Command();
         }
 
-        //checks for precedence operator without connector
+        //checks for parentheses operator without connector
         if (!p->isEmpty()) {
             v.push_back(p);
         }
