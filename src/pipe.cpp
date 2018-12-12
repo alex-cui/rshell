@@ -7,11 +7,6 @@ Pipe::Pipe(Command* prevCmd) : Command() {
 }
 
 void Pipe::exec() {
-	// for (unsigned i = 0; i < cmd.size(); ++i) {
-	// 	cout << cmd.at(0) << "*****" << endl; // outputs head
-	// 	exit(0);
-	// }
-
 	pid_t p1, p2;
 	int pfd[2];
 

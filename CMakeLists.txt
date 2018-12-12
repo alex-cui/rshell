@@ -12,6 +12,7 @@ ADD_EXECUTABLE(rshell
     src/command.cpp
     src/test.cpp
     src/parenthesis.cpp
+    src/less.cpp
     src/pipe.cpp
 )
 
@@ -23,6 +24,7 @@ ADD_EXECUTABLE(test
     src/command.cpp
     src/parenthesis.cpp
     src/test.cpp
+    src/less.cpp
     src/pipe.cpp
 )
 

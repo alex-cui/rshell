@@ -2,10 +2,15 @@
 #define LESS_H
 
 #include "command.h"
+#include <fstream>
 
 class Less : public Command {
+    protected:
+	    Command* prevCmd;
+
     public:
         Less();
+	    Less(Command* prevCmd);
 
         virtual void exec();
 };

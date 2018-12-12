@@ -6,6 +6,9 @@
 
 #include "../header/command.h"
 #include "../header/test.h"
+// #include "../header/greater.h"
+// #include "../header/greaterTwo.h"
+#include "../header/less.h"
 #include "../header/pipe.h"
 
 #include "../header/parenthesis.h"
@@ -190,22 +193,23 @@ int main() {
                 cmd->addCmd(c); //points to same location
             }
             else if (*c == '<') {
-                
+                c = strtok(0, " ");
+
+                cmd = new Less(cmd);
+
+                cmd->addCmd(c); //get the destination to take input from
             }
             else if (*c == '>') {
-                
+                c = strtok(0, " ");
             }
             else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
-
+                c = strtok(0, " ");
             }
             else if (c[0] == '|' && c[1] != '|') {
                 c = strtok(0, " ");
 
-                //save previous cmd to pipe
-                    // Command* prevCmd = cmd;
-                    // cmd = new Pipe(prevCmd); //now will exec() like pipe
-                    
-                cmd = new Pipe(cmd); //now will exec() like pipe
+                //saves previous cmd to pipe                    
+                cmd = new Pipe(cmd);
 
                 cmd->addCmd(c); //get the destination for redirection
             }
@@ -274,7 +278,7 @@ int main() {
             v.push_back(p);
         }
 
-        // outputs
+        //outputs
         for (unsigned i = 0; i < v.size(); ++i) {
             v.at(i)->exec();
 
