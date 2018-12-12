@@ -199,12 +199,15 @@ int main() {
 
             }
             else if (c[0] == '|' && c[1] != '|') {
-		c = strtok(0, " ");
+                c = strtok(0, " ");
 
-		//save previous cmd to pipe
-		Command* prevCmd = cmd;
-		cmd = new Pipe(prevCmd); //now will exec() like pipe
-		cmd->addCmd(c);
+                //save previous cmd to pipe
+                    // Command* prevCmd = cmd;
+                    // cmd = new Pipe(prevCmd); //now will exec() like pipe
+                    
+                cmd = new Pipe(cmd); //now will exec() like pipe
+
+                cmd->addCmd(c); //get the destination for redirection
             }
             else if (*c == '[') {
                 c = strtok(0, " "); 

@@ -27,9 +27,13 @@ class Command : public Base {
         
         void addCmd(char* c);
         void addFlag(char f);
+        
+        int getSize();
+        char* getCmd(int i);
         char getFlag(); //used for testing
+        
         bool isEmpty();
-        vector<char*> getCmds();
+
         virtual void exec();
 };
 

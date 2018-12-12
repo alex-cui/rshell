@@ -5,10 +5,12 @@
 
 class Pipe : public Command {
     protected:
-	Command* prevCmd;
+	    Command* prevCmd;
+
     public:
         Pipe();
-	Pipe(Command* prevCmd);
+	    Pipe(Command* prevCmd);
+
         virtual void exec();
 };
 

@@ -13,19 +13,23 @@ void Command::addFlag(char f) {
     testFlag = f;
 }
 
-bool Command::isEmpty() {
-    if (cmd.size() == 0) {
-        return true;
-    }
-    return false;
+int Command::getSize() {
+    return cmd.size();
+}
+
+char* Command::getCmd(int i) {
+    return cmd.at(i);
 }
 
 char Command::getFlag() {
     return testFlag;
 }
 
-vector<char*> Command::getCmds() {
-	return cmd;
+bool Command::isEmpty() {
+    if (cmd.size() == 0) {
+        return true;
+    }
+    return false;
 }
 
 void Command::exec() {    
@@ -44,7 +48,7 @@ void Command::exec() {
     if (pid == 0) { //child
         char* cstr[cmd.size() + 1];
 	
-	//copy vector into character array for execvp
+	    //copy vector into character array for execvp
         for (unsigned i = 0; i < cmd.size(); ++i) {
             cstr[i] = cmd.at(i);
         }
@@ -58,7 +62,7 @@ void Command::exec() {
     }
     else if (pid > 0) { //parent
         //wait for child to finish then resume
-	if (wait(0) < 0) {
+        if (wait(0) < 0) {
             perror("wait");
         }  
 
