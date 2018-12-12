@@ -4,11 +4,11 @@
 #include <iostream>
 #include <vector>
 
-#include "base.h"
+#include "command.h"
 
 using namespace std;
 
-class Parenthesis : public Base {
+class Parenthesis : public Command {
     protected:
 	    vector <Base*> v; //hold commands/connectors inside ()
 
