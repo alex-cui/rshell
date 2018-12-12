@@ -12,6 +12,7 @@ ADD_EXECUTABLE(rshell
     src/command.cpp
     src/test.cpp
     src/parenthesis.cpp
+    src/pipe.cpp
 )
 
 ADD_EXECUTABLE(test
@@ -22,6 +23,7 @@ ADD_EXECUTABLE(test
     src/command.cpp
     src/parenthesis.cpp
     src/test.cpp
+    src/pipe.cpp
 )
 
 TARGET_LINK_LIBRARIES(test gtest)
