@@ -24,6 +24,10 @@ char Command::getFlag() {
     return testFlag;
 }
 
+vector<char*> Command::getCmds() {
+	return cmd;
+}
+
 void Command::exec() {    
     string temp = "exit";
 

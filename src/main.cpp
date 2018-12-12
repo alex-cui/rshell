@@ -6,6 +6,7 @@
 
 #include "../header/command.h"
 #include "../header/test.h"
+#include "../header/pipe.h"
 
 #include "../header/parenthesis.h"
 
@@ -197,8 +198,13 @@ int main() {
             else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
 
             }
-            else if (*c == '|') {
+            else if (c[0] == '|' && c[1] != '|') {
+		c = strtok(0, " ");
 
+		//save previous cmd to pipe
+		Command* prevCmd = cmd;
+		cmd = new Pipe(prevCmd); //now will exec() like pipe
+		cmd->addCmd(c);
             }
             else if (*c == '[') {
                 c = strtok(0, " "); 

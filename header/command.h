@@ -29,7 +29,7 @@ class Command : public Base {
         void addFlag(char f);
         char getFlag(); //used for testing
         bool isEmpty();
-        
+        vector<char*> getCmds();
         virtual void exec();
 };
 
