@@ -40,6 +40,6 @@ void Less::exec() {
     }
     else {
 	perror("fork");
-		succeeded = false;
+	succeeded = false;
     }
 }
