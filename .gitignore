@@ -5,3 +5,4 @@ rshell
 lib/
 cmake_install.cmake
 test
+.DS_Store
