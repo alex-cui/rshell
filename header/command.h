@@ -21,14 +21,14 @@ using namespace std;
 class Command : public Base {
     protected:
         vector <char*> cmd; //accounts for flags
-	    char testFlag;
+	char testFlag;
         
     public:
         Command();
         
         void addCmd(char* c);
         void addFlag(char f);
-        
+
         int getSize();
         char* getCmd(int i);
         char getFlag(); //used for testing
