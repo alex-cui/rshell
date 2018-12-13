@@ -5,11 +5,10 @@
 
 class Greater : public Command {
     protected:
-	    Command* prevCmd;
-
+	Command* prevCmd;
     public:
         Greater();
-	    Greater(Command* prevCmd);
+        Greater(Command* prevCmd);
 
         virtual void exec();
 };

@@ -13,7 +13,7 @@ void Less::exec() {
     pid = fork();
     
     fflush(0); // flush standard I/O
-
+    
     //child process
     if (pid == 0) {
         //copies vector into cstr

@@ -15,6 +15,7 @@ ADD_EXECUTABLE(rshell
     src/greater.cpp
     src/less.cpp
     src/pipe.cpp
+    src/greaterTwo.cpp
 )
 
 ADD_EXECUTABLE(test
@@ -28,6 +29,7 @@ ADD_EXECUTABLE(test
     src/greater.cpp
     src/less.cpp
     src/pipe.cpp
+    src/greaterTwo.cpp
 )
 
 TARGET_LINK_LIBRARIES(test gtest)
