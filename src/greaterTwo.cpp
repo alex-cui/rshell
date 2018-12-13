@@ -1,9 +1,12 @@
 #include "../header/greaterTwo.h"
 
-GreaterTwo::GreaterTwo() : Command() {}
+GreaterTwo::GreaterTwo() : Command() {
+	id = "GreaterTwo";
+}
 
-GreaterTwo::GreaterTwo(Command* prevCmd) : Command() {
-	this->prevCmd = prevCmd;
+GreaterTwo::GreaterTwo(Command* prev) : Command() {
+	prevCmd = prev;
+	id = "GreaterTwo";
 }
 
 void GreaterTwo::exec() {

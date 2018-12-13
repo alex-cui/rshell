@@ -2,12 +2,12 @@
 
 And::And() {
     lhs = 0;
-    id = "and";
+    id = "And";
 }
 
 And::And(Base* left) {
     lhs = left;
-    id = "and";
+    id = "And";
 }
 
 //executes right if left succeeds

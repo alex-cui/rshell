@@ -3,6 +3,7 @@
 Command::Command() {
     testFlag = 'e';
     lhs = 0;
+    id = "Command";
 }
 
 void Command::addCmd(char* c) {

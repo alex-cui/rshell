@@ -9,7 +9,7 @@ class Less : public Command {
 
     public:
         Less();
-	    Less(Command* prevCmd);
+	    Less(Command* prev);
 
         virtual void exec();
 };

@@ -4,9 +4,15 @@
 #include "../header/and.h"
 #include "../header/or.h"
 
-#include "../header/test.h"
-#include "../header/parenthesis.h"
 #include "../header/command.h"
+#include "../header/test.h"
+#include "../header/greater.h"
+#include "../header/greaterTwo.h"
+#include "../header/less.h"
+#include "../header/pipe.h"
+
+#include "../header/parenthesis.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,110 +20,126 @@
 
 #include "gtest/gtest.h"
 
-int charIndex(char* temp, char c[]) {
+//main function needed for testing
+int charIndex(char* temp, char c) {
     int counter = 0;
-
-    while (*temp != *c) {
+    
+    while (*temp != c && *temp != '\0') {
         temp += 1;
         counter += 1;
     }
     return counter;
 }
 
-void parse(char* c, Parenthesis* p) {
-    char semicolon[] = ";";
-    char pound[] = "#";
-    string test = "test";
-    string ANDsym = "&&";
-    string ORsym = "||";
-    string openBrack = "[";
-    string closeBrack = "]";
+void parse(char* c, Parenthesis* inside, int skip) {
+    string test = "test";   
     string input = "";
 
     Command* cmd = new Command();
     Parenthesis* pre = new Parenthesis();
 
-    while (c[strlen(c) - 1] != ')') {
-        if (c[0] == '(') {
-            c += 1; 
-
-            p = new Parenthesis();
-            
-            
-            parse(c, pre);
-        }
-        else if (c == test) {
-            c = strtok(0, " ");
-
-            cmd = new Test();
-
-            if ((c[0] == '-') && (c[2] == '\0')) {
-                cmd->addFlag(c[1]);
-               c = strtok(0, " ");
-            }
-
-            cmd->addCmd(c);
-        }
+    while (strpbrk(c,")") == NULL) {
         if (strpbrk(c, "#") != NULL) {
             if (c[0] == '#') {
                 return;
-            }
-            else {
-                c[charIndex(&c[0], pound)] = '\0';
-
-                cmd->addCmd(c);
-                return;
+            } 
+            else {    
+                c[charIndex(&c[0], '#')] = '\0';
             }
         }
-        else if (c == openBrack) {
-            c = strtok(0, " ");
+        if (strpbrk(c, ";") != NULL) {
+            c[strlen(c) - 1] = '\0'; 
+        }
+
+        if (c[0] == '(') {
+            c += 1; //move over 1 from ()
+
+            //nested parenthesis
+            parse(c, pre, skip);
+            c += skip; //idk
+        }
+        else if (c == test) {
+            c = strtok(0, " "); 
 
             cmd = new Test();
 
             if ((c[0] == '-') && (c[2] == '\0')) {
                 cmd->addFlag(c[1]);
-                c = strtok(0, " ");
+               c = strtok(0, " "); 
             }
 
             cmd->addCmd(c);
+        }
+        else if (*c == '<') {
+            c = strtok(0, " ");
+		
+            cmd = new Less(cmd);
+            cmd->addCmd(c); //get the destination to take input from
+        }
+        else if (c[0] == '>' && c[1] != '>') {
+            c = strtok(0, " ");
 
-            while (c != closeBrack) {
-                c = strtok(0, " ");
+            cmd = new Greater(cmd);
+
+            cmd->addCmd(c); //get the destination to put input into
+        }
+        else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
+            c = strtok(0, " ");
+
+            cmd = new GreaterTwo(cmd);
+
+            cmd->addCmd(c); //get the destination to put input into
+        }
+        else if (c[0] == '|' && c[1] != '|') {
+            c = strtok(0, " ");
+		
+            //saves previous cmd to pipe                    
+            cmd = new Pipe(cmd);
+            cmd->addCmd(c); //get the destination for redirection
+        }
+        else if (*c == '[') {
+            c = strtok(0, " "); 
+
+            cmd = new Test();
+
+            if ((c[0] == '-') && (c[2] == '\0')) {
+                cmd->addFlag(c[1]);
+                c = strtok(0, " "); 
+            }
+
+            cmd->addCmd(c); //next should be ]
+
+            //only 2 differences from test
+            while (*c != ']') {
+                c = strtok(0, " "); 
                 cmd->addCmd(c);
             }
         }
-        else if (strpbrk(c, semicolon) != NULL) {
-            c[strlen(c) - 1] = '\0';
+        else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
+            if (!inside->isEmpty()) {
+                inside->add(pre);
+                inside->add(new And(inside));
 
-            cmd->addCmd(c);
-            p->add(cmd);
-                        cmd = new Command();
-        }
-        else if (c == ANDsym) {
-            if (!p->isEmpty()) {
-                p->add(pre);
-                p->add(new And(p));
-
-                p = new Parenthesis();
+                inside = new Parenthesis();
             }
             else {
-                p->add(cmd); 
-                p->add(new And(cmd));
-
+                inside->add(cmd); //command is completed
+                inside->add(new And(cmd));
+                    
                 cmd = new Command();
             }
         }
-        else if (c == ORsym) {
-            if (!p->isEmpty()) {
-                p->add(pre);
-                p->add(new Or(p));
-
-                p = new Parenthesis();
+        else if (c[0] == '|' && c[1] == '|' && c[2] == '\0') {
+            if (!inside->isEmpty()) {
+                inside->add(pre);
+                inside->add(new Or(inside));
+                
+                inside = new Parenthesis();
             }
             else {
-                p->add(cmd); 
-                p->add(new Or(cmd));
-
+                inside->add(cmd); //command is completed
+                inside->add(new Or(cmd));
+                    
                 cmd = new Command();
             }
         }
@@ -125,225 +147,265 @@ void parse(char* c, Parenthesis* p) {
             cmd->addCmd(c);
         }
 
+        skip += strlen(c - 1);
         c = strtok (0, " ");
     }
-    
-    
-    c[strlen(c) - 1] = '\0';
+
+    //now get last command
+    c[charIndex(&c[0], ')')] = '\0';
     cmd->addCmd(c);
 
-    p->add(cmd);
+    inside->add(cmd); //build commands in parentheses
 }
 
-int mainFunc(string input, char* &c) {
+vector<Base*> mainFunc(string input) {
     vector <Base*> v;
 
     Command* cmd = new Command();
     Parenthesis* p = new Parenthesis();
 
-    char semicolon[] = ";";
-    char pound[] = "#";
     string test = "test";   
-    string ANDsym = "&&";
-    string ORsym = "||";
-    string openBrack = "[";
-    string closeBrack = "]";
-    //char *c = 0;
-    
+
+    char* c = 0;
+
     if (input != "") {
-    	c = &input.at(0);
+        c = &input.at(0);
     }
 
-    strtok(c, " ");
-    
+    strtok(c, " "); 
+
+    //main loop that parses string 
     while (c != 0) {
-            if (c[0] == '(') {
-                c += 1; 
+        //for key words could be ANYWHERE
+        if (strpbrk(c, "#") != NULL) {
+            if (c[0] == '#') {
+                break;
+            } //dont want to add # as command!
+            else {    
+                //essentially cuts off everything after the #
+                c[charIndex(&c[0], '#')] = '\0';
+            }
+        }
+        if (strpbrk(c, ";") != NULL) {
+		    //semicolon should ALWAYS be at the end b/c ALWAYS space after
+            c[strlen(c) - 1] = '\0'; 
+        }
+            
+        //for when all of c is the key word
+        if (c[0] == '(' && c[1] == '\0') {
+            c += 1; //move over 1 from (
+
+            parse(c, p, 0); //forms precedence class which encapsulates all commands and connectors
+        }
+        else if (c == test) {
+            c = strtok(0, " "); 
+    
+            cmd = new Test(); //now will exec() like test
+    
+            //add flag if specified, -e otherwise
+            if ((c[0] == '-') && (c[2] == '\0')) {
+                cmd->addFlag(c[1]);
+                c = strtok(0, " "); 
+            }
+            cmd->addCmd(c); //points to same location
+        }
+        else if (*c == '<' && c[1] == '\0') {
+            c = strtok(0, " ");
+    
+            cmd = new Less(cmd);
+            cmd->addCmd(c); //get the destination to take input from
+        }
+        else if (*c == '>' && c[1] == '\0') {
+            c = strtok(0, " ");
+
+            cmd = new Greater(cmd);
+
+            cmd->addCmd(c); //get the destination to put input into
+        }
+        else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
+            c = strtok(0, " ");
+
+            cmd = new GreaterTwo(cmd);
+
+            cmd->addCmd(c); //get the destination to put input into
+        }
+        else if (*c == '|' && c[1] == '\0') {
+            c = strtok(0, " ");
+    
+            //saves previous cmd to pipe                    
+            cmd = new Pipe(cmd);
+            cmd->addCmd(c); //get the destination for redirection
+        }
+        else if (*c == '[' && c[1] == '\0') {
+            c = strtok(0, " "); 
+
+            cmd = new Test();
+
+            if ((c[0] == '-') && (c[2] == '\0')) {
+                cmd->addFlag(c[1]);
+                c = strtok(0, " "); 
+            }
+
+            cmd->addCmd(c);
+
+            //only 2 differences from test
+            while (*c != ']') {
+                c = strtok(0, " "); 
+                cmd->addCmd(c);
+            }
+        }
+        else if (c[0] == '&' && c[1] == '&' && c[2] == '\0') {
+            //in case a connector is attached to precedence
+            if (!p->isEmpty()) {
+                v.push_back(p);
+                v.push_back(new And(p));
 
                 p = new Parenthesis();
-
-                parse(c, p);
-            }
-            else if (c == test) {
-                c = strtok(0, " ");
-
-                cmd = new Test(); 
-
-                
-                if ((c[0] == '-') && (c[2] == '\0')) {
-                    cmd->addFlag(c[1]);
-                    c = strtok(0, " ");
-                }
-
-                cmd->addCmd(c); 
-            }
-            else if (strpbrk(c, pound) != NULL) {
-                if (c[0] == '#') {
-                    break;
-                } 
-                else {
-                    c[charIndex(&c[0], pound)] = '\0';
-
-                    cmd->addCmd(c); 
-                    break;
-                }
-            }
-            else if (c == openBrack) {
-                c = strtok(0, " ");
-
-                cmd = new Test();
-
-                if ((c[0] == '-') && (c[2] == '\0')) {
-                    cmd->addFlag(c[1]);
-                    c = strtok(0, " ");
-                }
-
-                cmd->addCmd(c);
-
-                
-                while (c != closeBrack) {
-                    c = strtok(0, " ");
-                    cmd->addCmd(c);
-                }
-            }
-            else if (strpbrk(c, semicolon) != NULL) {
-                        
-                c[strlen(c) - 1] = '\0';
-
-                cmd->addCmd(c);
-                v.push_back(cmd); 
-
-                cmd = new Command(); 
-            }
-            else if (c == ANDsym) {
-                if (!p->isEmpty()) {
-                    v.push_back(p);
-                    v.push_back(new And(p));
-                    p = new Parenthesis();
-                }
-                else {
-                    v.push_back(cmd); 
-                    v.push_back(new And(cmd));
-
-                    cmd = new Command();
-                }
-            }
-            else if (c == ORsym) {
-                if (!p->isEmpty()) {
-                    v.push_back(p);
-                    v.push_back(new Or(p));
-                    p = new Parenthesis();
-                }
-                else {
-                    v.push_back(cmd); 
-                    v.push_back(new Or(cmd));
-
-                    cmd = new Command();
-                }
             }
             else {
-                cmd->addCmd(c); 
+                v.push_back(cmd); //command is completed
+                v.push_back(new And(cmd));
+                
+                cmd = new Command();
             }
+        }
+        else if (c[0] == '|' && c[1] == '|' && c[2] == '\0') {
+            //in case a connector is attached to parentheses
+            if (!p->isEmpty()) {
+                v.push_back(p);
+                v.push_back(new Or(p));
 
-            c = strtok (0, " ");
+                p = new Parenthesis();
+            }
+            else {
+                v.push_back(cmd); //command is completed
+                v.push_back(new Or(cmd));
+                
+                cmd = new Command();
+            }
+        }
+        else {
+            cmd->addCmd(c); //keep building commands as possible flag
         }
         
-        if (!cmd->isEmpty()) {
-            v.push_back(cmd);
-            cmd = new Command();
-        }
+        c = strtok (0, " ");
+    }
 
-        
-        if (!p->isEmpty()) {
-            v.push_back(p);
-        }
+    //checks for last command without connector
+    if (!cmd->isEmpty()) {
+        v.push_back(cmd);         
+    }
 
-    
+    //checks for parentheses operator without connector
+    if (!p->isEmpty()) {
+        v.push_back(p);
+    }
 
-    return v.size();
+    return v;
 }
-//test if vector get appropriate numbers of commands
-TEST(VectorTest, oneCmd) {
-    string input = "echo A";
-    char* c = 0;
-    int vSize = 0;
-    vSize = mainFunc(input, c);
 
-    EXPECT_EQ(1, vSize);
+
+//--------------TESTS--------------
+//-----Vector Size Tests-----
+TEST(VectorTest, oneCmd) {
+    vector <Base*> v = mainFunc("echo A");
+
+    EXPECT_EQ(1, v.size());
 }
 
 TEST(VectorTest, twoCmd) {
-    string input = "echo A && echo B";
-    char* c = 0;
-    int vSize = 0;
-    vSize = mainFunc(input, c);
+    vector <Base*> v = mainFunc("echo A && echo B");
     
-    EXPECT_EQ(3, vSize);
+    EXPECT_EQ(3, v.size());
 }
 
 TEST(VectorTest, threeCmd) {
-    string input = "echo A && echo B || echo C";
-    char* c = 0;
-    int vSize = 0;
-    vSize = mainFunc(input, c);
+    vector <Base*> v = mainFunc("echo A && echo B || echo C");
 
-    EXPECT_EQ(5, vSize);
+    EXPECT_EQ(5, v.size());
 }
+
 TEST(VectorTest, fourCmd) {
-    string input = "echo A && echo B || echo C && echo D";
-    char* c = 0;
-    int vSize = 0;
-    vSize = mainFunc(input, c);
+    vector <Base*> v = mainFunc("echo A && echo B || echo C && echo D");
 
-    EXPECT_EQ(7, vSize);
+    EXPECT_EQ(7, v.size());
 }
 
-//test hasCommand function
+//-----Test hasCommand Function-----
 TEST(FuncTest, hasCmd) {
     Command* Cmd = new Command();
     int tVal = 0;
     string input = "echo A\0";
     char* c = &input.at(0);
+
     Cmd->addCmd(c);
+
     if (!Cmd->isEmpty()) {
-	tVal = 1;
+        tVal = 1;
     }
+
     EXPECT_EQ(1, tVal);	 
 }
+
 TEST(FuncTest, noCmd) {
     Command* Cmd = new Command();
     int tVal = 0;
+
     if (!Cmd->isEmpty()){
-	tVal = 1;
+        tVal = 1;
     }
+
     EXPECT_EQ(0, tVal);	
 }
-//check And connector
-TEST(ConnTest, TAnd) {
-    int tVal = 0;
-    Command* Cmd = new Command();
-    string input = "echo A";
-    char* c = &input.at(0);
-    Cmd->addCmd(c);
-    Connector* conn = new And(Cmd);
-   
-    if (conn->succeeded) {
-	tVal = 1;
-    }
-    EXPECT_EQ(1, tVal);
+
+//-----Connector Test-----
+TEST(ConnectorTest, And) {
+    vector <Base*> v = mainFunc("echo A && echo B");
+
+    EXPECT_EQ(3, v.size());
+    EXPECT_EQ(v.at(0)->id, "Command"); 
+    EXPECT_EQ(v.at(1)->id, "And"); 
+    EXPECT_EQ(v.at(2)->id, "Command"); 
 }
-//command test code from main()
-TEST(TestComm, one) {
-    int tVal = 0;
+
+//-----Flag Test-----
+TEST(TestCommandTest, one) {
     Command* cmd = new Command();
-    char c[] = "-e\0";
-    if ((c[0] == '-') && (c[2] == '\0')) {
-      cmd->addFlag(c[1]);
-    }	
-    if (cmd->getFlag() == 'e') {
-	tVal = 1;
-    }
-    EXPECT_EQ(1, tVal);
+
+    EXPECT_EQ(cmd->getFlag(), 'e');
+
+    cmd->addFlag('l');
+
+    EXPECT_EQ(cmd->getFlag(), 'l');
+}
+
+//-----Redirection Tests-----
+TEST(RedirectionTest, Greater) {
+    vector <Base*> v = mainFunc("cat > CMakeLists.txt");
+
+    EXPECT_EQ(1, v.size());
+    EXPECT_EQ(v.at(0)->id, "Greater"); 
+}
+
+TEST(RedirectionTest, GreaterTwo) {
+    vector <Base*> v = mainFunc("cat >> CMakeLists.txt");
+
+    EXPECT_EQ(1, v.size());
+    EXPECT_EQ(v.at(0)->id, "GreaterTwo"); 
+}
+
+TEST(RedirectionTest, Less) {
+    vector <Base*> v = mainFunc("cat < CMakeLists.txt");
+
+    EXPECT_EQ(1, v.size());
+    EXPECT_EQ(v.at(0)->id, "Less"); 
+}
+
+TEST(RedirectionTest, Pipe) {
+    vector <Base*> v = mainFunc("cat | CMakeLists.txt");
+
+    EXPECT_EQ(1, v.size());
+    EXPECT_EQ(v.at(0)->id, "Pipe"); 
 }
 
 int main(int argc, char **argv) {

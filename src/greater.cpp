@@ -1,9 +1,12 @@
 #include "../header/greater.h"
 
-Greater::Greater() : Command() {}
+Greater::Greater() : Command() {
+	id = "Greater";
+}
 
-Greater::Greater(Command* prevCmd) : Command() {
-	this->prevCmd = prevCmd;
+Greater::Greater(Command* prev) {
+	prevCmd = prev;
+	id = "Greater";
 }
 
 void Greater::exec() {
@@ -14,14 +17,11 @@ void Greater::exec() {
 	pid = fork();
 	fflush(0);
 	
-	if (pid == 0) {
-
     //child process
     if (pid == 0) {
-	    char* cstr[prevCmd->getSize() + 1];
+		//child process
+		char* cstr[prevCmd->getSize() + 1];
 
-        //copies vector into cstr
-        char* cstr[cmd.size() + 1];
 		for (unsigned i = 0; i < prevCmd->getSize(); ++i) {
 			cstr[i] = prevCmd->getCmd(i);
 		}

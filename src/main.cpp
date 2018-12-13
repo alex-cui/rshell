@@ -74,6 +74,33 @@ void parse(char* c, Parenthesis* inside, int skip) {
 
             cmd->addCmd(c);
         }
+        else if (*c == '<') {
+            c = strtok(0, " ");
+		
+            cmd = new Less(cmd);
+            cmd->addCmd(c); //get the destination to take input from
+        }
+        else if (c[0] == '>' && c[1] != '>') {
+            c = strtok(0, " ");
+
+            cmd = new Greater(cmd);
+
+            cmd->addCmd(c); //get the destination to put input into
+        }
+        else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
+            c = strtok(0, " ");
+
+            cmd = new GreaterTwo(cmd);
+
+            cmd->addCmd(c); //get the destination to put input into
+        }
+        else if (c[0] == '|' && c[1] != '|') {
+            c = strtok(0, " ");
+		
+            //saves previous cmd to pipe                    
+            cmd = new Pipe(cmd);
+            cmd->addCmd(c); //get the destination for redirection
+        }
         else if (*c == '[') {
             c = strtok(0, " "); 
 
@@ -174,12 +201,12 @@ int main() {
             }
             
             //for when all of c is the key word
-            if (c[0] == '(') {
+            if (c[0] == '(' && c[1] == '\0') {
                 c += 1; //move over 1 from (
 
                 parse(c, p, 0); //forms precedence class which encapsulates all commands and connectors
             }
-            else if (c == test) {
+            else if (c == test && c[1] == '\0') {
                 c = strtok(0, " "); 
 		
                 cmd = new Test(); //now will exec() like test
@@ -191,13 +218,13 @@ int main() {
                 }
                 cmd->addCmd(c); //points to same location
             }
-            else if (*c == '<') {
+            else if (*c == '<' && c[1] == '\0') {
                 c = strtok(0, " ");
 		
                 cmd = new Less(cmd);
                 cmd->addCmd(c); //get the destination to take input from
             }
-            else if (c[0] == '>' && c[1] != '>') {
+            else if (*c == '>' && c[1] == '\0') {
                 c = strtok(0, " ");
 
                 cmd = new Greater(cmd);
@@ -207,18 +234,18 @@ int main() {
             else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
                 c = strtok(0, " ");
 
-		cmd = new GreaterTwo(cmd);
+                cmd = new GreaterTwo(cmd);
 
-		cmd->addCmd(c); //get the destination to put input into
+                cmd->addCmd(c); //get the destination to put input into
             }
-            else if (c[0] == '|' && c[1] != '|') {
+            else if (*c == '|' && c[1] == '\0') {
                 c = strtok(0, " ");
 		
                 //saves previous cmd to pipe                    
                 cmd = new Pipe(cmd);
                 cmd->addCmd(c); //get the destination for redirection
             }
-            else if (*c == '[') {
+            else if (*c == '[' && c[1] == '\0') {
                 c = strtok(0, " "); 
 
                 cmd = new Test();

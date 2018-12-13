@@ -1,9 +1,12 @@
 #include "../header/less.h"
 
-Less::Less() : Command() {}
+Less::Less() : Command() {
+	id = "Less";
+}
 
-Less::Less(Command* prevCmd) : Command() {
-	this->prevCmd = prevCmd;
+Less::Less(Command* prev) : Command() {
+	prevCmd = prev;
+	id = "Less";
 }
 
 void Less::exec() {

@@ -5,10 +5,11 @@
 
 class GreaterTwo : public Command {
     protected:
-	Command* prevCmd;
+	    Command* prevCmd;
+
     public:
         GreaterTwo();
-	GreaterTwo(Command*);
+	    GreaterTwo(Command* prev);
 
         virtual void exec();
 };

@@ -1,9 +1,12 @@
 #include "../header/pipe.h"
 
-Pipe::Pipe() : Command() {}
+Pipe::Pipe() : Command() {
+	id = "Pipe";
+}
 
-Pipe::Pipe(Command* prevCmd) : Command() {
-	this->prevCmd = prevCmd;
+Pipe::Pipe(Command* prev) : Command() {
+	prevCmd = prev;
+	id = "Pipe";
 }
 
 void Pipe::exec() {

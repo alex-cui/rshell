@@ -2,10 +2,12 @@
 
 Connector::Connector() {
     lhs = 0;
+    id = "Connector";
 }
 
 Connector::Connector(Base* left) {
     lhs = left;
+    id = "Connector";
 }
 
 Base* Connector::getLeft() {

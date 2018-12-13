@@ -9,7 +9,7 @@ class Pipe : public Command {
 
     public:
         Pipe();
-	    Pipe(Command* prevCmd);
+	    Pipe(Command* prev);
 
         virtual void exec();
 };
