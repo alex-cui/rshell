@@ -18,9 +18,9 @@ void Greater::exec() {
     //child process
     if (pid == 0) {
         //copies vector into cstr
-        char* cstr[prevCmd->getSize() + 1];
-        for (unsigned i = 0; i < prevCmd->getSize(); ++i) {
-            cstr[i] = cmd.at(i);
+        char* cstr[cmd.size() + 1];
+        for (unsigned i = 0; i < cmd.size(); ++i) {
+            cstr[i] = prevCmd->getCmd(i);
         }
         cstr[cmd.size()] = NULL; //must be null terminated
 
