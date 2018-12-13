@@ -30,7 +30,8 @@ void Pipe::exec() {
 		close(pfd[0]);
 		dup2(pfd[1], STDOUT_FILENO);
 		close(pfd[1]);
-
+		
+	
 		if (execvp(cstr1[0], cstr1) < 0) {
 			perror("execvp");
 			succeeded = false;

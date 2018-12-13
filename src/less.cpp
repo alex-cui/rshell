@@ -24,7 +24,7 @@ void Less::exec() {
 	cstr[prevCmd->getSize()] = NULL; //must be null terminated
 
 	fd = open(input, O_RDONLY);
-	dup2(fd, STDIN_FILENO);
+	dup2(fd, STDIN_FILENO); //redirect data in file to stdin
 	close(fd);
 
 	if (execvp(cstr[0], cstr) < 0) {
