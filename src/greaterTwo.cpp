@@ -24,7 +24,8 @@ void GreaterTwo::exec() {
 		
 		cstr[prevCmd->getSize()] = NULL; //must be null terminated
 
-		fd = open(output,O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);		dup2(fd, STDOUT_FILENO);
+		fd = open(output,O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
+		dup2(fd, STDOUT_FILENO);
 		close(fd);
 
 		if (execvp(cstr[0], cstr) < 0) {
