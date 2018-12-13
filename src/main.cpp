@@ -7,7 +7,7 @@
 #include "../header/command.h"
 #include "../header/test.h"
 #include "../header/greater.h"
-// #include "../header/greaterTwo.h"
+#include "../header/greaterTwo.h"
 #include "../header/less.h"
 #include "../header/pipe.h"
 
@@ -197,7 +197,7 @@ int main() {
                 cmd = new Less(cmd);
                 cmd->addCmd(c); //get the destination to take input from
             }
-            else if (*c == '>') {
+            else if (c[0] == '>' && c[1] != '>') {
                 c = strtok(0, " ");
 
                 cmd = new Greater(cmd);
@@ -206,6 +206,10 @@ int main() {
             }
             else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
                 c = strtok(0, " ");
+
+		cmd = new GreaterTwo(cmd);
+
+		cmd->addCmd(c); //get the destination to put input into
             }
             else if (c[0] == '|' && c[1] != '|') {
                 c = strtok(0, " ");
