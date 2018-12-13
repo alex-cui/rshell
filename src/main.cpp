@@ -6,7 +6,7 @@
 
 #include "../header/command.h"
 #include "../header/test.h"
-// #include "../header/greater.h"
+#include "../header/greater.h"
 // #include "../header/greaterTwo.h"
 #include "../header/less.h"
 #include "../header/pipe.h"
@@ -201,6 +201,10 @@ int main() {
             }
             else if (*c == '>') {
                 c = strtok(0, " ");
+
+                cmd = new Greater(cmd);
+
+                cmd->addCmd(c); //get the destination to put input into
             }
             else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
                 c = strtok(0, " ");

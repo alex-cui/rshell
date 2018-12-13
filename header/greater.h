@@ -4,8 +4,12 @@
 #include "command.h"
 
 class Greater : public Command {
+    protected:
+	    Command* prevCmd;
+
     public:
         Greater();
+	    Greater(Command* prevCmd);
 
         virtual void exec();
 };
