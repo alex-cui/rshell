@@ -215,7 +215,7 @@ int main() {
                 c = strtok(0, " ");
 		
                 //saves previous cmd to pipe                    
-                cmd = new Pipe();
+                cmd = new Pipe(cmd);
                 cmd->addCmd(c); //get the destination for redirection
             }
             else if (*c == '[') {
