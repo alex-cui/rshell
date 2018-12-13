@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h> //for test commands
+#include <fcntl.h> // needed for I/O redirection
 
 #include <iostream>
 #include <string>

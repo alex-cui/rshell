@@ -7,19 +7,39 @@ Less::Less(Command* prevCmd) : Command() {
 }
 
 void Less::exec() {
-	pid_t pid;
+    pid_t pid;
+    char* input = cmd.at(0);
+    int fd;
+   
+    pid = fork();
+    
+    fflush(0); // flush standard I/O
+    if (pid == 0) {
+	//child process
+	char* cstr[prevCmd->getSize() + 1];
 
-    ifstream inFS;
-    ofstream oFS;
+	for (unsigned i = 0; i < prevCmd->getSize(); ++i) {
+		cstr[i] = prevCmd->getCmd(i);
+	}
+	cstr[prevCmd->getSize()] = NULL; //must be null terminated
 
-    string input;
+	fd = open(input, O_RDONLY);
+	dup2(fd, STDIN_FILENO);
+	close(fd);
 
-    inFS.open(cmd.at(0)); //should only be one file
-    oFS.open(prevCmd->getCmd(0));
-
-    while (inFS >> input) {
-        //now make it as input to prevCmd file
-cout << input << "***" << endl;
-        oFS << input;
+	if (execvp(cstr[0], cstr) < 0) {
+		perror("execvp");
+		succeeded = false;
+	}
+    }
+    else if (pid > 0) {
+	if (wait(0) < 0) {
+		perror("wait");
+	}
+	succeeded = true;
+    }
+    else {
+	perror("fork");
+		succeeded = false;
     }
 }
