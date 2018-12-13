@@ -1,7 +1,7 @@
 #include "../header/command.h"
 
 Command::Command() {
-    testFlag = 'e';
+    flag = 'e';
     lhs = 0;
     id = "Command";
 }
@@ -11,7 +11,7 @@ void Command::addCmd(char* c) {
 }
 
 void Command::addFlag(char f) {
-    testFlag = f;
+    flag = f;
 }
 
 int Command::getSize() {
@@ -23,7 +23,7 @@ char* Command::getCmd(int i) {
 }
 
 char Command::getFlag() {
-    return testFlag;
+    return flag;
 }
 
 bool Command::isEmpty() {
