@@ -8,38 +8,39 @@ Less::Less(Command* prevCmd) : Command() {
 
 void Less::exec() {
     pid_t pid;
-    char* input = cmd.at(0);
     int fd;
    
     pid = fork();
     
     fflush(0); // flush standard I/O
+    
+    //child process
     if (pid == 0) {
-	//child process
-	char* cstr[prevCmd->getSize() + 1];
+        //copies vector into cstr
+        char* cstr[prevCmd->getSize() + 1];
+        for (unsigned i = 0; i < prevCmd->getSize(); ++i) {
+            cstr[i] = prevCmd->getCmd(i);
+        }
+        cstr[prevCmd->getSize()] = NULL; //must be null terminated
 
-	for (unsigned i = 0; i < prevCmd->getSize(); ++i) {
-		cstr[i] = prevCmd->getCmd(i);
-	}
-	cstr[prevCmd->getSize()] = NULL; //must be null terminated
-
-	fd = open(input, O_RDONLY);
-	dup2(fd, STDIN_FILENO); //redirect data in file to stdin
-	close(fd);
-
-	if (execvp(cstr[0], cstr) < 0) {
-		perror("execvp");
-		succeeded = false;
-	}
+        fd = open(cmd.at(0), O_RDONLY); //should only be the first cmd
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+        
+        if (execvp(cstr[0], cstr) < 0) {
+            perror("execvp");
+            succeeded = false;
+        }
     }
     else if (pid > 0) {
-	if (wait(0) < 0) {
-		perror("wait");
-	}
-	succeeded = true;
+        //parent process
+        if (wait(0) < 0) {
+            perror("wait");
+        }
+        succeeded = true;
     }
     else {
-	perror("fork");
+        perror("fork");
 		succeeded = false;
     }
 }

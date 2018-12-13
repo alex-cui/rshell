@@ -8,7 +8,8 @@ class Greater : public Command {
 	Command* prevCmd;
     public:
         Greater();
-	Greater(Command*);
+        Greater(Command* prevCmd);
+
         virtual void exec();
 };
 

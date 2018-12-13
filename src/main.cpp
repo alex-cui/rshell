@@ -199,8 +199,10 @@ int main() {
             }
             else if (*c == '>') {
                 c = strtok(0, " ");
-		cmd = new Greater(cmd);
-		cmd->addCmd(c);
+
+                cmd = new Greater(cmd);
+
+                cmd->addCmd(c); //get the destination to put input into
             }
             else if (c[0] == '>' && c[1] == '>' && c[2] == '\0') {
                 c = strtok(0, " ");

@@ -2,7 +2,6 @@
 #define LESS_H
 
 #include "command.h"
-#include <fstream>
 
 class Less : public Command {
     protected:
