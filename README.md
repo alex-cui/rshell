@@ -31,6 +31,8 @@ If "test" is encountered, or its symbolic version [ ], we will check the status 
 
 If a parentheses is encountered, the order of operations is changed. So, we will encapsulate all commands/connectors in the parentheses into one node, then execute as normal. However, the bool returned from the whole statement will depend on the whatever was executed in the node.
 
+If a less than, greater than, double greater than, or pipe symbol is encountered, the commands will need to be properly redirected. We create a new command accordingly and encapsulate the previous command into the new command object to handle the redirection.
+
 When the loop is broken by using the special exit command, the program will simply end.
 
 
@@ -43,6 +45,8 @@ Both connectors will be executed by returning a bool based on the last command's
 The test command will be executed by checking the flag and then running the stat() function.
 
 The Precedence class will be executed by executing all commands/connectors within it, and then returning a bool based on the overall sucess.
+
+The redirection classes will be executed by holding a pointer to the previous command and utilizing the dup2 and pipe functions to redirect to standard input and output.
 
 
 ## Known Bugs
