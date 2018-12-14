@@ -12,13 +12,13 @@ void Test::exec() {
         succeeded = false;
     } 
     else {
-        if (testFlag == 'e') {
+        if (flag == 'e') {
             cout << "(True)" << endl;
 
             succeeded = true;
             return;
         }
-        else if (testFlag == 'f') {
+        else if (flag == 'f') {
             if (S_ISREG(buffer.st_mode)) {
                 cout << "(True)" << endl;
 
@@ -26,7 +26,7 @@ void Test::exec() {
                 return;
             }
         }
-        else if (testFlag == 'd') {
+        else if (flag == 'd') {
             if (S_ISDIR(buffer.st_mode)) {
                 cout << "(True)" << endl;
 
