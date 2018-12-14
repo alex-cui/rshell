@@ -54,6 +54,7 @@ The redirection classes will be executed by holding a pointer to the previous co
 
 The bug that still remains is the exit bug, where after encountering a failed command, you must type "exit" for the amount of failed commands, + 1. The reason for this is unknown.
 
+Currently cannot handle chained redirection commands (can only handle one at a time).
 
 ## Authors
 ------------
