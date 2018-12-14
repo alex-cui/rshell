@@ -173,7 +173,8 @@ int main() {
     string test = "test";   
     string input = "";
     char *c = 0;
-
+    
+    cout << "$ ";
     //while quit when user puts "exit" (still obey connector rules)
     while (getline(cin, input)) {
         //checks for empty input
@@ -334,7 +335,8 @@ int main() {
         //reset
         p = new Parenthesis();
         cmd = new Command();
-        v.clear(); 
+        v.clear();
+	cout << "$ ";
     }
 
     return 0;
