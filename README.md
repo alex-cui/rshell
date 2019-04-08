@@ -1,5 +1,7 @@
 # RShell
 
+### A simple bash replica
+
 ![](https://github.com/alex-cui/rshell/blob/master/rshell.png)
 
 
@@ -63,4 +65,5 @@ Currently cannot handle chained redirection commands (can only handle one at a t
 ## Authors
 ------------
 
-Alex Cui and Jacob Halvorson
+Alex Cui <br>
+Jacob Halvorson
