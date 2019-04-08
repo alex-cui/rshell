@@ -5,9 +5,9 @@
 
 Run these commands to install and run Rshell
 ```Install Process
-$ git clone https://github.com/cs100/assignment-1-team-4.git
+$ git clone https://github.com/alex-cui/rshell.git
 
-$ cd assignment-1-team-4
+$ cd rshell
 
 $ cmake3 .
 
