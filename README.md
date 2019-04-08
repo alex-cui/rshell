@@ -1,6 +1,7 @@
-# Assignment 2 -- Rshell
+# RShell
 
 ![](https://github.com/alex-cui/rshell/blob/master/rshell.png)
+
 
 
 ## Installation
