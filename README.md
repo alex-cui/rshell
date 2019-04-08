@@ -1,6 +1,6 @@
 # RShell
 
-### A simple bash replica
+#### A simple bash replica
 
 ![](https://github.com/alex-cui/rshell/blob/master/rshell.png)
 
